@@ -1,13 +1,14 @@
 {
-    "name": "tu-nombre/unimanager",
-    "description": "Sistema de gestión académica - Tecnología Web II",
+    "name": "biblioteca/digital",
+    "description": "Sistema de Biblioteca Digital - Tecnología Web II",
     "type": "project",
     "require": {
         "php": "^8.2"
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "App\\Config\\": "config/"
         }
     },
     "authors": [

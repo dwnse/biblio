@@ -1,0 +1,522 @@
+1. Presentación y Contexto General
+1.1 Introducción del Proyecto
+Sistema Web sobre una Bibliotecaria en Digital
+Descripción:
+El Sistema Web de Biblioteca Digital es una plataforma en línea que permite gestionar libros en formato digital, autores, categorías y editoriales, así como el registro y control de usuarios.
+El sistema permite a los usuarios registrarse, iniciar sesión, buscar libros, descargarlos, calificarlos y dejar reseñas.
+Además, cuenta con un módulo administrativo para gestionar el catálogo digital, controlar la disponibilidad de libros, administrar usuarios y registrar acciones mediante un sistema de logs.
+En términos generales, el sistema centraliza la gestión bibliográfica y facilita el acceso a contenido digital de manera organizada y segura.
+Problema que resuelve:
+Actualmente, muchas bibliotecas o instituciones educativas presentan los siguientes problemas:
+Gestión manual o desorganizada de libros digitales.
+
+
+Dificultad para controlar descargas y disponibilidad.
+
+
+Falta de seguimiento sobre qué usuarios descargan qué libros.
+
+
+Ausencia de un sistema estructurado para reseñas y calificaciones.
+
+
+Poco control administrativo sobre el catálogo.
+Esto genera:
+Desorden en la información.
+
+
+Pérdida de tiempo en búsquedas.
+
+
+Falta de trazabilidad (no saber quién hizo qué).
+
+
+Mala experiencia para los usuarios.
+El sistema resuelve estos problemas mediante una plataforma centralizada que organiza la información, automatiza procesos y mejora la experiencia de acceso a libros digitales.
+Usuarios objetivo: 
+Usuarios Registrados
+Buscar libros por título, categoría o autor.
+
+
+Descargar libros digitales.
+
+
+Calificar libros.
+
+
+Escribir reseñas.
+
+
+Gestionar su perfil.
+ Administrador
+Registrar, editar y eliminar libros.
+
+
+Gestionar autores, categorías y editoriales.
+
+
+Administrar usuarios.
+
+
+Controlar estados (activo/inactivo).
+
+
+Visualizar logs del sistema.
+
+
+Supervisar descargas y reseñas.
+1.2 Gestión de Requisitos (Backlog General)
+Lista de Historias de Usuario (Mínimo 12)
+Prioridad Alta
+ID
+Descripción
+Criterios de Aceptación
+Estimación
+Iteración
+HU-001
+Como usuario visitante, quiero registrarme en el sistema, para poder acceder a los libros digitales.
+- Validación de campos obligatorios.- Email único.- Contraseña encriptada.- Mensaje de confirmación.
+5 puntos
+Iteración 1
+HU-002
+Como usuario registrado, quiero iniciar sesión, para acceder a mi cuenta.
+- Validación correcta de credenciales.- Mensaje de error si son incorrectas.- Creación de sesión activa.
+5 puntos
+Iteración 1
+HU-003
+Como administrador, quiero registrar libros, para mantener actualizado el catálogo digital.
+- Registro con título, ISBN, categoría y autor.- Validación de datos.- Confirmación de guardado.
+8 puntos
+Iteración 1
+HU-004
+Como usuario, quiero visualizar el catálogo de libros, para explorar el contenido disponible.
+- Lista paginada.- Mostrar título, autor y categoría.- Solo libros activos visibles.
+5 puntos
+Iteración 1
+
+Prioridad Media
+ID
+Descripción
+Criterios de Aceptación
+Estimación
+Iteración
+HU-005
+Como usuario, quiero buscar libros por título o categoría, para encontrarlos más rápido.
+- Campo de búsqueda funcional.
+- Resultados filtrados correctamente.
+- Mensaje si no hay coincidencias.
+5 puntos
+Iteración 2
+HU-006
+Como usuario, quiero descargar libros digitales, para leerlos sin conexión.
+- Registro de descarga en la base de datos.
+- Archivo descargable.
+- Control de disponibilidad.
+8 puntos
+Iteración 2
+HU-007
+Como usuario, quiero dejar una reseña en un libro, para compartir mi opinión.
+- Solo usuarios autenticados pueden reseñar.
+- Comentario guardado correctamente.
+- Fecha registrada.
+5 puntos
+Iteración 2
+HU-008
+Como usuario, quiero calificar libros, para evaluar su calidad.
+- Sistema de puntuación (ej. 1 a 5 estrellas).
+- Solo una calificación por usuario por libro.
+3 puntos
+Iteración 2
+
+Prioridad Baja
+ID
+Descripción
+Criterios de Aceptación
+Estimación
+Iteración
+HU-009
+Como administrador, quiero gestionar categorías, para organizar mejor los libros.
+- Crear, editar y desactivar categorías.
+- Validación de datos.
+5 puntos
+Iteración 2
+HU-010
+Como administrador, quiero gestionar autores, para mantener información actualizada.
+- Crear, editar y desactivar autores.
+- Validación correcta.
+5 puntos
+Iteración 2
+HU-011
+Como administrador, quiero visualizar los logs del sistema, para monitorear acciones de usuarios.
+- Registro automático de acciones.
+- Vista filtrable por usuario o fecha.
+8 puntos
+Iteración 3
+HU-012
+Como administrador, quiero desactivar usuarios, para mantener la seguridad del sistema.
+- Cambio de estado activo/inactivo.
+- Usuario inactivo no puede iniciar sesión.
+5 puntos
+Iteración 3
+
+2. Planificación y Ejecución de la Iteración 1
+2.1 Objetivos de la Iteración 1
+Objetivo principal
+Entregar una versión funcional inicial del sistema que permita:
+Registro de usuarios.
+
+
+Inicio de sesión con autenticación segura.
+
+
+Registro de libros por parte del administrador.
+
+
+Visualización del catálogo digital.
+Valor de negocio entregado
+Al finalizar la Iteración 1, el sistema permite:
+Tener una base de usuarios autenticados.
+
+
+Contar con un catálogo digital administrable.
+
+
+Garantizar acceso seguro mediante control de sesiones.
+
+
+Sentar la estructura principal del sistema para futuras funcionalidades.
+Duración de la iteración
+1 semana.
+Esta duración permitió desarrollar el núcleo del sistema sin comprometer calidad ni estructura.
+2.2 Historias de Usuario Seleccionadas
+Historias incluidas en la Iteración 1
+HU-001 – Registro de usuario
+
+
+HU-002 – Inicio de sesión
+
+
+HU-003 – Registro de libros
+
+
+HU-004 – Visualización del catálogo
+Justificación
+Las historias fueron seleccionadas porque:
+Son la base estructural del sistema.
+
+
+Permiten tener un producto funcional mínimo (MVP).
+
+
+Otras funcionalidades dependen de estas (por ejemplo, no se puede descargar un libro sin antes tener usuarios y catálogo).
+
+
+Representan el mayor valor inicial para el cliente.
+
+
+No se incluyeron historias como descargas o reseñas porque dependen del módulo de autenticación y catálogo previamente implementado.
+Estado actual:
+Historia
+Estado
+HU-001
+En progreso
+HU-002
+En progreso
+HU-003
+En progreso
+HU-004
+En progreso
+
+2.3 Prácticas XP Implementadas en la Iteración
+Desarrollo Incremental:
+Autenticación de usuarios
+Gestión básica de libros
+Visualización del catálogo
+Quedó pendiente para la Iteración 2:
+Descargas de libros.
+
+
+Sistema de reseñas.
+
+
+Calificaciones.
+
+
+Gestión avanzada de categorías y autores.
+El sistema ya es funcional, pero aún no está completo.
+Refactorización:
+Durante la iteración se realizaron mejoras en:
+Separación de lógica de base de datos y controladores.
+
+
+Reorganización de funciones repetidas en clases reutilizables.
+
+
+Mejora en validaciones de formularios.
+Problema de deuda técnica resuelto:
+Inicialmente el acceso a base de datos estaba mezclado con lógica de presentación.
+ Se refactorizó para separar responsabilidades, mejorando la mantenibilidad y escalabilidad.
+Integración Continua (CI):
+Se realizaron commits diarios al repositorio.
+
+
+Se utilizó una rama principal (main) protegida.
+
+
+Se trabajó con ramas feature/registro, feature/login, etc.
+
+
+Antes de hacer merge a main se probaba el funcionamiento manualmente.
+Frecuencia promedio: 1–3 commits por día por integrante.
+3. Diseño Simple y Modelado Ligero
+3.1 Arquitectura del Proyecto
+Estructura de directorios y separación por capas.
+project-root/
+│
+├── config/
+│   ├── constants.php
+│   └── database.php
+│
+├── public/
+│   └── estudiantes/
+│       ├── crear.php
+│       ├── index.php
+│       └── reporte.php
+│
+├── src/
+│   ├── Enums/
+│   │   ├── StudentStatus.php
+│   │   └── UserRole.php
+│   │
+│   ├── Models/
+│   │   └── Student.php
+│   │
+│   ├── Repositories/
+│   │   └── StudentRepository.php
+│   │
+│   ├── Services/
+│   │   └── AcademicCalculator.php
+│   │
+│   └── Utils/
+│       ├── Helpers.php
+│       └── Validator.php
+│
+├── vendor/
+│   └── composer/
+│       ├── ClassLoader.php
+│       ├── InstalledVersions.php
+│       ├── LICENSE
+│       ├── autoload_classmap.php
+│       ├── autoload_namespaces.php
+│       ├── autoload_psr4.php
+│       ├── autoload_real.php
+│       ├── autoload_static.php
+│       ├── installed.json
+│       ├── installed.php
+│       └── platform_check.php
+│
+├── vendor/autoload.php
+│
+├── .gitignore
+├── README.md
+├── composer.json
+└── composer.lock
+Gestión de dependencias y Autoload con composer.json.
+Se utiliza Composer como gestor de dependencias.
+Composer es una herramienta que administra librerías externas y genera el sistema de autoload.
+Archivos clave:
+composer.json define dependencias y reglas PSR-4
+
+
+composer.lock fija versiones exactas
+
+
+vendor/ contiene dependencias instaladas
+
+
+vendor/autoload.php archivo que carga automáticamente las clases
+3.2 Modelado del Sistema
+3.2.1 Diagrama de Casos de Uso
+
+3.2.2 Modelo de Base de Datos
+
+3.2.3 Diagrama de Clases / Secuencia
+
+4. Implementación Técnica (PHP Avanzado)
+4.1 Programación Orientada a Objetos (POO)
+Inventario de Clases implementadas en la Iteración 1:
+Clase
+Tipo
+Responsabilidad Única
+DatabaseConnection
+Servicio
+Crear y gestionar conexión PDO.
+IRepository
+Interfaz
+Definir contrato CRUD.
+BaseRepository
+Abstracta
+Implementar lógica común de acceso a datos.
+UserRepository
+Concreta
+Persistencia de usuarios.
+BookRepository
+Concreta
+Persistencia de libros.
+UserService
+Servicio
+Lógica de negocio de usuarios.
+BookService
+Servicio
+Lógica de negocio de libros.
+User
+Entidad
+Modelo del usuario.
+Book
+Entidad
+Modelo del libro.
+LoggerService
+Servicio
+Registrar eventos del sistema.
+UserNotFoundException
+Excepción personalizada
+Error cuando no existe usuario.
+
+4.2 Aplicación de Conceptos Avanzados
+La implementación del sistema se desarrolló siguiendo el paradigma de Programación Orientada a Objetos (POO), que es un modelo de programación basado en la creación de objetos que contienen datos y comportamientos.
+Se aplicaron los siguientes principios:
+Separación de responsabilidades
+
+
+Encapsulamiento
+
+
+Bajo acoplamiento
+
+
+Alta cohesión
+Herencia
+La herencia permite que una clase hija reutilice atributos y métodos de una clase padre.
+En el sistema:
+Los repositorios específicos (UserRepository, BookRepository) heredan de BaseRepository.
+
+
+Esto evita duplicación de lógica de conexión y operaciones comunes.
+
+
+Beneficio:
+Reutilización de código
+
+
+Organización jerárquica
+
+
+Reducción de redundancia
+Interfaces
+Una interfaz define un conjunto de métodos que una clase está obligada a implementar.
+En el sistema:
+IRepository define las operaciones básicas como buscar o eliminar.
+Todos los repositorios deben cumplir ese contrato.
+
+
+Beneficio:
+Uniformidad en la arquitectura
+Flexibilidad para cambiar implementaciones
+Facilita pruebas unitarias
+Clases Abstractas
+Una clase abstracta es una clase base que no puede instanciarse directamente y sirve como plantilla para otras clases.
+En el sistema:
+BaseRepository centraliza lógica común.
+BaseException sirve como base para excepciones específicas.
+Beneficio:
+Define estructura común
+Permite extender comportamiento sin repetir código
+Polimorfismo
+El polimorfismo permite que diferentes clases respondan al mismo método de distintas maneras.
+En el sistema:
+UserService trabaja con la interfaz IRepository.
+Puede recibir cualquier clase que implemente ese contrato.
+No depende directamente de una implementación concreta.
+Beneficio:
+Bajo acoplamiento
+Mayor escalabilidad
+Código más flexible
+4.3 Manejo de Excepciones y Errores
+Uso de bloques try-catch
+El bloque try-catch permite capturar errores y manejarlos de forma controlada sin detener completamente la ejecución del sistema.
+Aplicación en el sistema:
+Captura errores cuando no se encuentra un registro.
+
+
+Controla fallos de base de datos.
+
+
+Evita que el sistema muestre errores técnicos al usuario final.
+
+
+Beneficio:
+Mayor estabilidad
+
+
+Mejor experiencia de usuario
+
+
+Control centralizado de errores
+Excepciones Personalizadas
+Una excepción personalizada es una clase que representa un error específico del dominio del sistema.
+Ejemplo conceptual:
+UserNotFoundException representa el caso en que un usuario no existe.
+Ventajas:
+Permite diferenciar tipos de error.
+Mejora la claridad del código.
+Facilita depuración y mantenimiento.
+Sistema de Logging
+El logging es el registro sistemático de eventos importantes dentro de una aplicación.
+En el sistema se registran:
+Errores críticos
+
+
+Intentos fallidos de acceso
+
+
+Operaciones importantes
+
+
+Beneficios:
+Auditoría del sistema
+
+
+Detección de fallos
+
+
+Monitoreo y mantenimiento
+
+
+Soporte técnico más eficiente
+5. Pruebas y Validaciones
+5.1 Estrategia de Pruebas
+Pruebas Unitarias Automatizadas:
+Pruebas de Aceptación: 
+Resultados Obtenidos: 
+6. Seguimiento Ágil y Comunicación
+6.1 Registro del Daily Standup
+Formato por día y por miembro:
+Día 1 - [Nombre]: ¿Qué hice ayer? / ¿Qué haré hoy? / ¿Qué impedimentos tengo?
+6.2 Cliente In Situ / Feedback de Stakeholders
+Resumen de las demostraciones hechas al cliente/profesor.
+Comentarios recibidos sobre el entregable de la Iteración 1.
+Plan de acción (Qué se va a cambiar en la Iteración 2 basado en este feedback).
+6.3 Retrospectiva de la Iteración
+Qué salió bien: (Ej. Buena comunicación, uso correcto de Git).
+Qué se puede mejorar: (Ej. Subestimamos el tiempo de la base de datos).
+Acciones para la siguiente iteración: (Ej. Hacer commits más pequeños).
+7. Entorno y Herramientas
+Lenguaje y Versión: (Ej. PHP 8.2)
+Framework / Librerías: (Si aplica)
+Gestor de Dependencias: Composer
+Servidor Web y Base de Datos: (Ej. Apache/Nginx, MySQL/PostgreSQL)
+IDE / Editor: (Ej. VSCode, PhpStorm)
+Modelado UML / DB: (Ej. Draw.io, MySQL Workbench)
+Control de Versiones: Git + GitHub (con políticas de branch protection).
+Gestión Ágil: Jira, Trello o Miro.
+8. Anexos y Entregables Obligatorios (Sprint 1)
