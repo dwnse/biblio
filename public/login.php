@@ -19,10 +19,10 @@ $flash = Helpers::getFlash();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Inicia sesión en BiblioDigital para acceder al catálogo de libros digitales.">
+    <link rel="stylesheet" href="css/styles.css">
     <title>Iniciar Sesión —
         <?= APP_NAME ?>
     </title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>/css/styles.css">
 </head>
 
 <body>

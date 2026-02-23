@@ -14,7 +14,7 @@ class DatabaseConnection
     private string $host = 'localhost';
     private string $dbName = 'biblioteca_db';
     private string $username = 'root';
-    private string $password = '';
+    private string $password = ' ';
     private string $charset = 'utf8mb4';
 
     private function __construct()

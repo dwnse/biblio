@@ -19,10 +19,11 @@ $flash = Helpers::getFlash();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Crea tu cuenta en BiblioDigital para descargar y explorar libros digitales.">
+    <link rel="stylesheet" href="css/styles.css">
+
     <title>Crear Cuenta —
         <?= APP_NAME ?>
     </title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>/css/styles.css">
 </head>
 
 <body>
