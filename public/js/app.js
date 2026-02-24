@@ -65,7 +65,8 @@ function handleForm(formId, options = {}) {
 
         try {
             const formData = new FormData(form);
-            const response = await fetch(form.action, {
+
+            const response = await fetch(form.getAttribute('action'), {
                 method: 'POST',
                 body: formData,
             });
