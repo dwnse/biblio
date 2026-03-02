@@ -31,8 +31,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
     <div id="toast-container" class="toast-container"></div>
 
-    <?php if (Helpers::isLoggedIn()): ?>
-        <nav class="navbar">
+    <nav class="navbar">
             <a href="<?= BASE_URL ?>/catalogo.php" class="navbar-brand">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -76,29 +75,35 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     </li>
                 <?php endif; ?>
 
-                <li class="nav-user">
-                    <div class="nav-avatar">
-                        <?= strtoupper(substr($currentUser['name'], 0, 1)) ?>
-                    </div>
-                    <div class="nav-user-info">
-                        <span class="nav-user-name">
-                            <?= htmlspecialchars($currentUser['name']) ?>
-                        </span>
-                        <span class="nav-user-role">
-                            <?= htmlspecialchars($currentUser['role_name']) ?>
-                        </span>
-                    </div>
-                    <a href="<?= BASE_URL ?>/api/logout.php" class="btn-nav-logout">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                            <polyline points="16 17 21 12 16 7" />
-                            <line x1="21" y1="12" x2="9" y2="12" />
-                        </svg>
-                        Salir
-                    </a>
-                </li>
+                <?php if (Helpers::isLoggedIn()): ?>
+                    <li class="nav-user">
+                        <div class="nav-avatar">
+                            <?= strtoupper(substr($currentUser['name'], 0, 1)) ?>
+                        </div>
+                        <div class="nav-user-info">
+                            <span class="nav-user-name">
+                                <?= htmlspecialchars($currentUser['name']) ?>
+                            </span>
+                            <span class="nav-user-role">
+                                <?= htmlspecialchars($currentUser['role_name']) ?>
+                            </span>
+                        </div>
+                        <a href="<?= BASE_URL ?>/api/logout.php" class="btn-nav-logout">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            Salir
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li style="display:flex; gap:0.5rem; margin-left: 1rem;">
+                        <a href="<?= BASE_URL ?>/login.php" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Entrar</a>
+                        <a href="<?= BASE_URL ?>/register.php" class="btn btn-primary" style="padding: 0.5rem 1rem;">Registrarse</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </nav>
-    <?php endif; ?>
 
     <main class="main-content">

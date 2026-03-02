@@ -7,8 +7,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use App\Utils\Helpers;
 use App\Services\BookService;
 
-Helpers::requireLogin();
-
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 if (!$id) {
     Helpers::setFlash('error', 'Libro no especificado.');
@@ -149,14 +147,25 @@ require_once __DIR__ . '/includes/header.php';
 
             <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
                 <?php if ($bookObj->isDisponible() && !empty($book['archivo_url'])): ?>
-                    <a href="<?= htmlspecialchars($book['archivo_url']) ?>" class="btn btn-primary btn-lg" download>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                        Descargar libro
-                    </a>
+                    <?php if (Helpers::isLoggedIn()): ?>
+                        <a href="<?= htmlspecialchars($book['archivo_url']) ?>" class="btn btn-primary btn-lg" target="_blank" download>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Descargar libro
+                        </a>
+                    <?php else: ?>
+                        <a href="<?= BASE_URL ?>/login.php" class="btn btn-primary btn-lg">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                <polyline points="10 17 15 12 10 7" />
+                                <line x1="15" y1="12" x2="3" y2="12" />
+                            </svg>
+                            Inicia sesión para descargar
+                        </a>
+                    <?php endif; ?>
                 <?php endif; ?>
                 <a href="<?= BASE_URL ?>/catalogo.php" class="btn btn-secondary btn-lg">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">

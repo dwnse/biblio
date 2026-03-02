@@ -10,6 +10,10 @@ use App\Utils\Helpers;
 $userService = new UserService();
 $userService->logout();
 
+// Restart session to store flash message (logout destroyed the previous session)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 Helpers::setFlash('success', 'Sesión cerrada correctamente.');
 header('Location: ' . BASE_URL . '/login.php');
 exit;

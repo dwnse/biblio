@@ -8,8 +8,6 @@ use App\Utils\Helpers;
 use App\Services\BookService;
 use App\Repositories\CategoryRepository;
 
-Helpers::requireLogin();
-
 $pageTitle = 'Catálogo';
 $bookService = new BookService();
 $categoryRepo = new CategoryRepository();

@@ -58,7 +58,7 @@ $flash = Helpers::getFlash();
                             <polyline points="22,6 12,13 2,6" />
                         </svg>
                         <input type="email" id="email" name="email" class="form-control" placeholder="tu@email.com"
-                            required autocomplete="email">
+                            required autocomplete="email" maxlength="150">
                     </div>
                 </div>
 
@@ -70,7 +70,7 @@ $flash = Helpers::getFlash();
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
                         <input type="password" id="contrasena" name="contrasena" class="form-control"
-                            placeholder="••••••••" required minlength="6" autocomplete="current-password">
+                            placeholder="••••••••" required minlength="6" maxlength="255" autocomplete="current-password">
                     </div>
                 </div>
 

@@ -54,31 +54,6 @@ $flash = Helpers::getFlash();
                 <input type="hidden" name="action" value="register">
 
                 <div class="form-group">
-                    <label class="form-label" for="nombre">Nombre *</label>
-                    <div class="input-icon-wrapper">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                        <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Tu nombre"
-                            required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="apellidoP">Apellido paterno</label>
-                        <input type="text" id="apellidoP" name="apellidoP" class="form-control"
-                            placeholder="Apellido paterno">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="apellidoM">Apellido materno</label>
-                        <input type="text" id="apellidoM" name="apellidoM" class="form-control"
-                            placeholder="Apellido materno">
-                    </div>
-                </div>
-
-                <div class="form-group">
                     <label class="form-label" for="email">Correo electrónico *</label>
                     <div class="input-icon-wrapper">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -86,18 +61,7 @@ $flash = Helpers::getFlash();
                             <polyline points="22,6 12,13 2,6" />
                         </svg>
                         <input type="email" id="email" name="email" class="form-control" placeholder="tu@email.com"
-                            required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="telefono">Teléfono</label>
-                    <div class="input-icon-wrapper">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path
-                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                        </svg>
-                        <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="+591 xxxxxxx">
+                            required maxlength="150">
                     </div>
                 </div>
 
@@ -105,12 +69,12 @@ $flash = Helpers::getFlash();
                     <div class="form-group">
                         <label class="form-label" for="contrasena">Contraseña *</label>
                         <input type="password" id="contrasena" name="contrasena" class="form-control"
-                            placeholder="Mín. 6 caracteres" required minlength="6">
+                            placeholder="Mín. 6 caracteres" required minlength="6" maxlength="255">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="contrasena_confirm">Confirmar *</label>
                         <input type="password" id="contrasena_confirm" name="contrasena_confirm" class="form-control"
-                            placeholder="Repetir contraseña" required minlength="6">
+                            placeholder="Repetir contraseña" required minlength="6" maxlength="255">
                     </div>
                 </div>
 

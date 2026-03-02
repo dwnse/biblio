@@ -56,6 +56,12 @@ function handleForm(formId, options = {}) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        // Native HTML5 validation check
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalHtml = submitBtn.innerHTML;
 

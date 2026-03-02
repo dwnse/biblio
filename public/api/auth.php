@@ -24,11 +24,12 @@ try {
 
             $validator = new Validator($_POST);
             $validator
-                ->required('nombre', 'Nombre')
                 ->required('email', 'Email')
                 ->email('email')
+                ->maxLength('email', 150, 'Email')
                 ->required('contrasena', 'Contraseña')
                 ->minLength('contrasena', 6, 'Contraseña')
+                ->maxLength('contrasena', 255, 'Contraseña')
                 ->required('contrasena_confirm', 'Confirmar contraseña')
                 ->matches('contrasena', 'contrasena_confirm');
 
@@ -37,13 +38,18 @@ try {
                 exit;
             }
 
+            // Generar nombre por defecto a partir del correo
+            $email = Helpers::sanitize($_POST['email']);
+            $emailParts = explode('@', $email);
+            $defaultName = ucfirst($emailParts[0] ?? 'Usuario');
+
             $data = [
-                'nombre' => Helpers::sanitize($_POST['nombre']),
-                'apellidoP' => Helpers::sanitize($_POST['apellidoP'] ?? ''),
-                'apellidoM' => Helpers::sanitize($_POST['apellidoM'] ?? ''),
-                'email' => Helpers::sanitize($_POST['email']),
+                'nombre' => $defaultName,
+                'apellidoP' => '',
+                'apellidoM' => '',
+                'email' => $email,
                 'contrasena' => $_POST['contrasena'],
-                'telefono' => Helpers::sanitize($_POST['telefono'] ?? ''),
+                'telefono' => '',
             ];
 
             $userId = $userService->register($data);

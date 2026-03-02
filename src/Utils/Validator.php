@@ -61,6 +61,52 @@ class Validator
     }
 
     /**
+     * Regex Pattern
+     */
+    public function pattern(string $field, string $pattern, string $message): self
+    {
+        if (isset($this->data[$field]) && $this->data[$field] !== '' && !preg_match($pattern, (string)$this->data[$field])) {
+            $this->errors[$field] = $message;
+        }
+        return $this;
+    }
+
+    /**
+     * Valor numérico mínimo
+     */
+    public function min(string $field, float $min, string $label = ''): self
+    {
+        $label = $label ?: $field;
+        if (isset($this->data[$field]) && is_numeric($this->data[$field]) && (float)$this->data[$field] < $min) {
+            $this->errors[$field] = "El campo {$label} debe ser igual o mayor a {$min}.";
+        }
+        return $this;
+    }
+
+    /**
+     * Valor numérico máximo
+     */
+    public function max(string $field, float $max, string $label = ''): self
+    {
+        $label = $label ?: $field;
+        if (isset($this->data[$field]) && is_numeric($this->data[$field]) && (float)$this->data[$field] > $max) {
+            $this->errors[$field] = "El campo {$label} debe ser igual o menor a {$max}.";
+        }
+        return $this;
+    }
+
+    /**
+     * Validar URL
+     */
+    public function url(string $field, string $label = 'URL'): self
+    {
+        if (isset($this->data[$field]) && $this->data[$field] !== '' && !filter_var($this->data[$field], FILTER_VALIDATE_URL)) {
+            $this->errors[$field] = "El campo {$label} no tiene un formato válido.";
+        }
+        return $this;
+    }
+
+    /**
      * Confirmar que dos campos coinciden
      */
     public function matches(string $field1, string $field2, string $label = 'Las contraseñas'): self

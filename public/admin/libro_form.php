@@ -77,7 +77,7 @@ require_once __DIR__ . '/../includes/header.php';
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                     </svg>
                     <input type="text" id="titulo" name="titulo" class="form-control"
-                        placeholder="Ej: Cien Años de Soledad" required
+                        placeholder="Ej: Cien Años de Soledad" required minlength="2" maxlength="200"
                         value="<?= htmlspecialchars($book['titulo'] ?? '') ?>">
                 </div>
             </div>
@@ -86,12 +86,13 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="form-group">
                     <label class="form-label" for="isbn">ISBN</label>
                     <input type="text" id="isbn" name="isbn" class="form-control" placeholder="Ej: 978-3-16-148410-0"
+                        maxlength="20" pattern="^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[a-zA-Z0-9X-]+$" title="Ingresa un formato ISBN válido (10 o 13 dígitos)"
                         value="<?= htmlspecialchars($book['isbn'] ?? '') ?>">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="anio_publicacion">Año de publicación</label>
                     <input type="number" id="anio_publicacion" name="anio_publicacion" class="form-control"
-                        placeholder="Ej: 2024" min="1800" max="2030" value="<?= $book['anio_publicacion'] ?? '' ?>">
+                        placeholder="Ej: 2024" min="1000" max="<?= date('Y') ?>" value="<?= $book['anio_publicacion'] ?? '' ?>">
                 </div>
             </div>
 
@@ -149,12 +150,12 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="form-group">
                     <label class="form-label" for="portada_url">URL de portada</label>
                     <input type="url" id="portada_url" name="portada_url" class="form-control" placeholder="https://..."
-                        value="<?= htmlspecialchars($book['portada_url'] ?? '') ?>">
+                        maxlength="255" value="<?= htmlspecialchars($book['portada_url'] ?? '') ?>">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="archivo_url">URL del archivo (PDF)</label>
                     <input type="url" id="archivo_url" name="archivo_url" class="form-control" placeholder="https://..."
-                        value="<?= htmlspecialchars($book['archivo_url'] ?? '') ?>">
+                        maxlength="255" value="<?= htmlspecialchars($book['archivo_url'] ?? '') ?>">
                 </div>
             </div>
 

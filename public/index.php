@@ -6,13 +6,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Utils\Helpers;
 
-// Si ya tiene sesión, redirigir
-if (Helpers::isLoggedIn()) {
-    if (Helpers::isAdmin()) {
-        Helpers::redirect('/admin/index.php');
-    } else {
-        Helpers::redirect('/catalogo.php');
-    }
+// Redirigir según el rol o al catálogo público si es invitado
+if (Helpers::isLoggedIn() && Helpers::isAdmin()) {
+    Helpers::redirect('/admin/index.php');
 } else {
-    Helpers::redirect('/login.php');
+    Helpers::redirect('/catalogo.php');
 }
