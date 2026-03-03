@@ -138,6 +138,10 @@ class BookService
      */
     public function deleteBook(int $id): bool
     {
+        // Eliminar registros dependientes antes de borrar el libro
+        $this->bookRepository->deleteBookReviews($id);
+        $this->bookRepository->deleteBookDownloads($id);
+        $this->bookRepository->deleteBookRecommendations($id);
         $this->bookRepository->detachAuthors($id);
         $this->bookRepository->detachCategories($id);
         $result = $this->bookRepository->delete($id);

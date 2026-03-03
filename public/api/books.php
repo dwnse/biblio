@@ -57,6 +57,24 @@ try {
                 }
             }
 
+            // Handle PDF file upload
+            if (isset($_FILES['archivo_file']) && $_FILES['archivo_file']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['archivo_file'];
+                if ($file['type'] !== 'application/pdf') {
+                    Helpers::jsonResponse(['success' => false, 'message' => 'Solo se permiten archivos PDF.']);
+                }
+                if ($file['size'] > 20 * 1024 * 1024) {
+                    Helpers::jsonResponse(['success' => false, 'message' => 'El PDF no debe superar los 20MB.']);
+                }
+                $filename = 'book_' . time() . '_' . bin2hex(random_bytes(4)) . '.pdf';
+                $uploadDir = __DIR__ . '/../uploads/books/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $destination = $uploadDir . $filename;
+                if (move_uploaded_file($file['tmp_name'], $destination)) {
+                    $_POST['archivo_url'] = BASE_URL . '/uploads/books/' . $filename;
+                }
+            }
+
             $validator = new Validator($_POST);
             $validator
                 ->required('titulo', 'Título')
@@ -120,6 +138,24 @@ try {
                 $destination = $uploadDir . $filename;
                 if (move_uploaded_file($file['tmp_name'], $destination)) {
                     $_POST['portada_url'] = BASE_URL . '/uploads/covers/' . $filename;
+                }
+            }
+
+            // Handle PDF file upload
+            if (isset($_FILES['archivo_file']) && $_FILES['archivo_file']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['archivo_file'];
+                if ($file['type'] !== 'application/pdf') {
+                    Helpers::jsonResponse(['success' => false, 'message' => 'Solo se permiten archivos PDF.']);
+                }
+                if ($file['size'] > 20 * 1024 * 1024) {
+                    Helpers::jsonResponse(['success' => false, 'message' => 'El PDF no debe superar los 20MB.']);
+                }
+                $filename = 'book_' . time() . '_' . bin2hex(random_bytes(4)) . '.pdf';
+                $uploadDir = __DIR__ . '/../uploads/books/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $destination = $uploadDir . $filename;
+                if (move_uploaded_file($file['tmp_name'], $destination)) {
+                    $_POST['archivo_url'] = BASE_URL . '/uploads/books/' . $filename;
                 }
             }
 

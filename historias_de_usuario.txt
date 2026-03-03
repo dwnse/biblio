@@ -137,23 +137,6 @@ Criterios de Verificación:
      redirige al catálogo con mensaje flash de error.
   5. Los datos se sanitizan con htmlspecialchars() antes de renderizarse.
 
---------------------------------------------------------------------------------
-HU-08: Restricción de Descarga de Libros
-Prioridad: Alta
-Rol: Visitante / Sistema
-Historia: "Como administrador, quiero que solo los usuarios autenticados puedan
-descargar los archivos PDF de los libros, para incentivar el registro y
-proteger los activos de la plataforma."
-Criterios de Verificación:
-  1. Si el usuario NO tiene sesión iniciada, el botón de descarga en la página
-     de detalles del libro cambia su texto a "Inicia sesión para descargar".
-  2. Al hacer clic en dicho botón, el usuario invitado es enviado a la
-     pantalla de login.
-  3. Si el usuario SÍ tiene sesión iniciada, el botón verde de descarga
-     funciona normalmente enviándolo a la URL del archivo PDF.
-  4. El botón de descarga solo aparece si el libro está disponible Y tiene un
-     archivo_url asignado.
-
 ================================================================================
                            MÓDULO DE RESEÑAS Y CALIFICACIONES
 ================================================================================
@@ -313,122 +296,30 @@ Criterios de Verificación:
      registradas en los logs de auditoría.
 
 --------------------------------------------------------------------------------
-HU-16: Carga de Portadas de Libros (Upload Local)
+HU-16: Sistema de Subida Local de Portadas y PDFs
 Prioridad: Media
 Rol: Administrador
-Historia: "Como administrador, quiero poder subir una imagen de portada de un
-libro desde mi equipo local, para tener portadas personalizadas sin depender
-de URLs externas."
+Historia: "Como administrador, quiero poder subir las imágenes de portada y
+los archivos PDF de los libros directamente desde mi computadora, para no depender
+de URLs externas y centralizar los recursos en el servidor local."
 Criterios de Verificación:
-  1. El formulario de libro (libro_form.php) incluye un área de subida de
-     archivos con input type='file' (id='portada_file').
-  2. Se muestra una vista previa (preview) de la imagen seleccionada antes
-     de enviar el formulario (app.js: FileReader API).
-  3. Se valida en el frontend que el archivo sea una imagen (JPEG, PNG, GIF,
-     WEBP) y no exceda 5MB.
-  4. El archivo se almacena en el directorio public/uploads/.
-  5. El campo portada_url se actualiza con la ruta relativa al archivo subido.
+  1. El formulario de libros incluye áreas separadas para subir un archivo
+     de imagen (portada) y un archivo PDF (archivo_file).
+  2. Al seleccionar un archivo, la interfaz muestra el nombre del archivo o una 
+     vista previa de la imagen antes de subirlo.
+  3. Las imágenes se validan en el cliente y servidor para asegurar que sean
+     solo JPG, PNG, WebP o GIF y no superen los 5MB (public/uploads/covers/).
+  4. Los PDFs se validan en el cliente y servidor para asegurar que sean
+     estrictamente application/pdf y no superen los 20MB (public/uploads/books/).
+  5. Los archivos se guardan con nombres únicos generados automáticamente.
+  6. Si un libro ya cuenta con archivos cargados, la pantalla de edición
+     lo indica claramente en la interfaz.
 
 ================================================================================
                          MÓDULO TRANSVERSAL / SISTEMA
 ================================================================================
 
 --------------------------------------------------------------------------------
-HU-17: Doble Capa de Validación Estratégica
-Prioridad: Crítica
-Rol: Usuario / Sistema
-Historia: "Como plataforma de software, necesito obligar a que todos los datos
-transaccionados superen una validación estricta en tiempo real en la vista, y
-otra de respaldo en el servidor, para blindar la sanidad de la base de datos."
-Criterios de Verificación:
-  1. El archivo JavaScript (app.js) utiliza la API nativa de los navegadores
-     invocando form.checkValidity() antes de ejecutar fetch(), deteniendo las
-     tareas cuando falten constraints como minlength, maxlength o require.
-  2. La clase PHP Validator.php implementa métodos encadenables para verificar:
-     - Campos obligatorios (required)
-     - Formato de email (email)
-     - Longitudes mínimas y máximas (minLength, maxLength)
-     - Valores numéricos mínimos y máximos (min, max)
-     - Validación de URLs (url)
-     - Patrones RegEx (pattern)
-     - Coincidencia de campos (matches)
-     - Tipo numérico (numeric)
-  3. Cada validación fallida retorna siempre un JSON con HTTP 200 pero
-     success: false y el primer mensaje de error, interpretado por los
-     "Toasts" en la IU sin romper la experiencia.
-
---------------------------------------------------------------------------------
-HU-18: Sistema de Auditoría y Logging
-Prioridad: Alta
-Rol: Sistema / Administrador
-Historia: "Como administrador, quiero que todas las acciones críticas del sistema
-queden registradas en un log de auditoría, para tener trazabilidad completa de
-las operaciones realizadas por cada usuario."
-Criterios de Verificación:
-  1. Existe una tabla 'logs' en la BD que almacena: id_log, id_usuario, accion,
-     tabla_afectada, id_registro_afectado, fecha e IP del cliente.
-  2. El LoggerService registra automáticamente las acciones de: registro de
-     usuario, inicio y cierre de sesión, CRUD de libros, CRUD de autores,
-     CRUD de categorías, CRUD de editoriales y creación de reseñas.
-  3. Los errores de logging NO interrumpen el flujo normal de la aplicación
-     (capturados con try-catch silencioso).
-  4. El LoggerService proporciona un método getLogs() con filtros opcionales
-     por usuario, rango de fechas y límite de resultados.
-  5. Cada registro incluye la IP del cliente ($_SERVER['REMOTE_ADDR']).
-
---------------------------------------------------------------------------------
-HU-19: Control de Acceso y Protección de Rutas
-Prioridad: Crítica
-Rol: Sistema
-Historia: "Como sistema, necesito garantizar que las rutas administrativas solo
-sean accesibles por usuarios con rol de administrador, y que las funcionalidades
-protegidas requieran autenticación, para mantener la seguridad de la plataforma."
-Criterios de Verificación:
-  1. Helpers::requireAdmin() verifica primero que el usuario esté autenticado
-     y luego que su rol sea administrador (id_rol = 1).
-  2. Todas las páginas en admin/ llaman a Helpers::requireAdmin() al inicio.
-  3. Los endpoints API protegidos (catalog.php, books.php) verifican
-     autenticación y rol antes de procesar cualquier solicitud.
-  4. Los usuarios no autorizados son redirigidos a 403.php con un mensaje
-     flash de error.
-  5. El endpoint de reseñas (api/reviews.php) requiere autenticación pero
-     no rol de administrador.
-
---------------------------------------------------------------------------------
-HU-20: Notificaciones Toast en la Interfaz
-Prioridad: Media
-Rol: Usuario / Sistema
-Historia: "Como usuario, quiero recibir notificaciones visuales de retroalimenta-
-ción (éxito, error, advertencia) al realizar acciones en la plataforma, para
-saber inmediatamente el resultado de mis operaciones."
-Criterios de Verificación:
-  1. El sistema Toast (app.js) soporta tipos: success, error, warning e info,
-     cada uno con su ícono SVG y color distintivo.
-  2. Los toasts aparecen con animación de entrada y se auto-ocultan después de
-     4 segundos (configurable).
-  3. Los mensajes flash de PHP (Helpers::setFlash/getFlash) se muestran
-     automáticamente como toasts al cargar la página siguiente (via
-     elemento #flash-data con data attributes).
-  4. Las respuestas AJAX de las APIs también muestran el resultado via Toast.
-  5. Los toasts pueden ser descartados manualmente por el usuario haciendo clic
-     en el botón de cierre.
-
---------------------------------------------------------------------------------
-HU-21: Interfaz Responsiva y Navegación Móvil
-Prioridad: Media
-Rol: Visitante / Usuario
-Historia: "Como usuario, quiero poder usar la plataforma de forma cómoda desde
-cualquier dispositivo (escritorio, tablet, móvil), gracias a un diseño
-responsivo y una navegación adaptativa."
-Criterios de Verificación:
-  1. El archivo styles.css define estilos responsivos para todas las vistas.
-  2. La función initMobileNav() (app.js) inicializa un menú de navegación
-     adaptado para dispositivos móviles.
-  3. El catálogo utiliza un grid responsivo (book-grid) que se adapta al
-     ancho de la pantalla.
-  4. Los formularios y tablas del panel admin se ajustan a pantallas pequeñas.
-  5. Las animaciones de entrada (animate-fadeIn, animate-fadeInUp) mejoran
-     la experiencia visual en la carga de contenido.
 
 ================================================================================
                     RESUMEN DE PRIORIDADES

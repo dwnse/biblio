@@ -316,4 +316,57 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // ── PDF Upload Preview ──
+    const pdfFileInput = document.getElementById('archivo_file');
+    const pdfPreview = document.getElementById('pdfPreview');
+    const pdfUploadArea = document.getElementById('pdfUploadArea');
+
+    if (pdfFileInput) {
+        // Click area triggers file input
+        if (pdfUploadArea) {
+            pdfUploadArea.addEventListener('click', () => pdfFileInput.click());
+        }
+
+        pdfFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                pdfPreview.style.display = 'none';
+                return;
+            }
+
+            // Validate file type
+            if (file.type !== 'application/pdf') {
+                Toast.show('Por favor selecciona un archivo PDF válido.', 'warning');
+                pdfFileInput.value = '';
+                pdfPreview.style.display = 'none';
+                return;
+            }
+
+            // Validate file size (max 20MB)
+            if (file.size > 20 * 1024 * 1024) {
+                Toast.show('El archivo PDF no debe superar los 20MB.', 'warning');
+                pdfFileInput.value = '';
+                pdfPreview.style.display = 'none';
+                return;
+            }
+
+            // Show preview UI
+            if (pdfPreview) {
+                pdfPreview.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="color: var(--primary);">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    <span style="font-size: 0.9rem; font-weight: 500;">Listo para subir: ${file.name}</span>
+                `;
+                pdfPreview.style.display = 'flex';
+            }
+
+            // Update upload area text
+            if (pdfUploadArea) {
+                pdfUploadArea.querySelector('p').textContent = file.name;
+            }
+        });
+    }
 });

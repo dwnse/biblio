@@ -151,6 +151,24 @@ class BookRepository extends BaseRepository
         $stmt->execute(['id' => $bookId]);
     }
 
+    public function deleteBookReviews(int $bookId): void
+    {
+        $stmt = $this->db->prepare("DELETE FROM resenas WHERE id_libro = :id");
+        $stmt->execute(['id' => $bookId]);
+    }
+
+    public function deleteBookDownloads(int $bookId): void
+    {
+        $stmt = $this->db->prepare("DELETE FROM descargas WHERE id_libro = :id");
+        $stmt->execute(['id' => $bookId]);
+    }
+
+    public function deleteBookRecommendations(int $bookId): void
+    {
+        $stmt = $this->db->prepare("DELETE FROM recomendaciones WHERE id_libro = :id");
+        $stmt->execute(['id' => $bookId]);
+    }
+
     public function countByStatus(string $estado): int
     {
         $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM libros WHERE estado = :estado");

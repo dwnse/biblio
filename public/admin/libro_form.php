@@ -158,38 +158,54 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Portada del libro</label>
-                <div class="cover-upload-area" id="coverUploadArea">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                        <polyline points="21 15 16 10 5 21" />
-                    </svg>
-                    <p>Haz clic para seleccionar una imagen</p>
-                    <p style="font-size:0.75rem; margin-top:0.3rem;">JPG, PNG o WebP — máximo 5MB</p>
-                </div>
-                <input type="file" id="portada_file" name="portada_file" accept="image/*" style="display:none;">
-                <?php if ($isEdit && !empty($book['portada_url'])): ?>
-                    <div class="cover-preview" id="coverPreview">
-                        <img src="<?= htmlspecialchars($book['portada_url']) ?>" alt="Portada actual">
-                    </div>
-                <?php else: ?>
-                    <div class="cover-preview" id="coverPreview" style="display:none;"></div>
-                <?php endif; ?>
-            </div>
-
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label" for="portada_url">O ingresa una URL de portada</label>
-                    <input type="url" id="portada_url" name="portada_url" class="form-control" placeholder="https://..."
-                        maxlength="255" value="<?= htmlspecialchars($book['portada_url'] ?? '') ?>">
-                    <span class="form-hint">Si subes una imagen, este campo se ignora</span>
+                    <label class="form-label">Portada del libro</label>
+                    <div class="cover-upload-area" id="coverUploadArea">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                        <p>Haz clic para seleccionar una imagen</p>
+                        <p style="font-size:0.75rem; margin-top:0.3rem;">JPG, PNG o WebP — máximo 5MB</p>
+                    </div>
+                    <input type="file" id="portada_file" name="portada_file" accept="image/*" style="display:none;">
+                    <?php if ($isEdit && !empty($book['portada_url'])): ?>
+                        <div class="cover-preview" id="coverPreview">
+                            <img src="<?= htmlspecialchars($book['portada_url']) ?>" alt="Portada actual">
+                        </div>
+                    <?php else: ?>
+                        <div class="cover-preview" id="coverPreview" style="display:none;"></div>
+                    <?php endif; ?>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label" for="archivo_url">URL del archivo (PDF)</label>
-                    <input type="url" id="archivo_url" name="archivo_url" class="form-control" placeholder="https://..."
-                        maxlength="255" value="<?= htmlspecialchars($book['archivo_url'] ?? '') ?>">
+                    <label class="form-label">Archivo PDF del libro</label>
+                    <div class="cover-upload-area" id="pdfUploadArea" style="border-style: dashed; border-color: var(--primary);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="12" y1="18" x2="12" y2="12" />
+                            <line x1="9" y1="15" x2="15" y2="15" />
+                        </svg>
+                        <p>Haz clic para subir un PDF</p>
+                        <p style="font-size:0.75rem; margin-top:0.3rem;">Solo formato PDF — máximo 20MB</p>
+                    </div>
+                    <input type="file" id="archivo_file" name="archivo_file" accept="application/pdf" style="display:none;">
+                    
+                    <?php if ($isEdit && !empty($book['archivo_url'])): ?>
+                        <div class="pdf-preview" id="pdfPreview" style="margin-top: 1rem; padding: 0.75rem; background: var(--bg-hover); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem; color: var(--text);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="color: var(--primary);">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                            <span style="font-size: 0.9rem; font-weight: 500;">Archivo actual cargado (<a href="<?= htmlspecialchars($book['archivo_url']) ?>" target="_blank" style="color: var(--primary);">Ver PDF</a>)</span>
+                        </div>
+                    <?php else: ?>
+                        <div class="pdf-preview" id="pdfPreview" style="display:none; margin-top: 1rem; padding: 0.75rem; background: var(--bg-hover); border-radius: 6px; align-items: center; gap: 0.5rem; color: var(--text);">
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
