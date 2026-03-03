@@ -75,7 +75,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="card-glass animate-fadeInUp">
-        <form id="bookForm" action="<?= BASE_URL ?>/api/books.php" method="POST">
+        <form id="bookForm" action="<?= BASE_URL ?>/api/books.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="<?= $isEdit ? 'update' : 'create' ?>">
             <?php if ($isEdit): ?>
                 <input type="hidden" name="id_libro" value="<?= $book['id_libro'] ?>">
@@ -158,11 +158,33 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="form-label">Portada del libro</label>
+                <div class="cover-upload-area" id="coverUploadArea">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    <p>Haz clic para seleccionar una imagen</p>
+                    <p style="font-size:0.75rem; margin-top:0.3rem;">JPG, PNG o WebP — máximo 5MB</p>
+                </div>
+                <input type="file" id="portada_file" name="portada_file" accept="image/*" style="display:none;">
+                <?php if ($isEdit && !empty($book['portada_url'])): ?>
+                    <div class="cover-preview" id="coverPreview">
+                        <img src="<?= htmlspecialchars($book['portada_url']) ?>" alt="Portada actual">
+                    </div>
+                <?php else: ?>
+                    <div class="cover-preview" id="coverPreview" style="display:none;"></div>
+                <?php endif; ?>
+            </div>
+
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label" for="portada_url">URL de portada</label>
+                    <label class="form-label" for="portada_url">O ingresa una URL de portada</label>
                     <input type="url" id="portada_url" name="portada_url" class="form-control" placeholder="https://..."
                         maxlength="255" value="<?= htmlspecialchars($book['portada_url'] ?? '') ?>">
+                    <span class="form-hint">Si subes una imagen, este campo se ignora</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="archivo_url">URL del archivo (PDF)</label>

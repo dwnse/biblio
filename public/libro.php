@@ -6,6 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Utils\Helpers;
 use App\Services\BookService;
+use App\Repositories\BookRepository;
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 if (!$id) {
@@ -27,6 +28,13 @@ $bookObj->setAutores($book['autores'] ?? []);
 $bookObj->setCategorias($book['categorias'] ?? []);
 
 $pageTitle = $bookObj->getTitulo();
+
+// Check if current user has already reviewed
+$hasReviewed = false;
+if (Helpers::isLoggedIn()) {
+    $bookRepo = new BookRepository();
+    $hasReviewed = $bookRepo->hasUserReviewed($id, (int)$_SESSION['user_id']);
+}
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -234,6 +242,81 @@ require_once __DIR__ . '/includes/header.php';
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
+
+        <!-- Review Form -->
+        <?php if (Helpers::isLoggedIn()): ?>
+            <?php if (!$hasReviewed): ?>
+                <div class="card" style="margin-top: 1rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"
+                                style="display:inline;vertical-align:middle;margin-right:0.4rem;">
+                                <path d="M12 20h9" />
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            </svg>
+                            Escribe tu reseña
+                        </h3>
+                    </div>
+                    <div style="padding: 1.25rem;">
+                        <form id="reviewForm" action="<?= BASE_URL ?>/api/reviews.php" method="POST">
+                            <input type="hidden" name="action" value="create">
+                            <input type="hidden" name="id_libro" value="<?= $book['id_libro'] ?>">
+                            <input type="hidden" name="calificacion" id="reviewRatingInput" value="0">
+
+                            <div class="form-group">
+                                <label class="form-label">Tu calificación *</label>
+                                <div class="star-rating-input" id="starRatingPicker">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <svg class="star-pick" data-value="<?= $i ?>" viewBox="0 0 24 24" width="32" height="32"
+                                            stroke="currentColor" stroke-width="1.5" fill="none">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    <?php endfor; ?>
+                                    <span class="star-rating-label" id="starRatingLabel">Selecciona una calificación</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="comentario">Comentario (opcional)</label>
+                                <textarea id="comentario" name="comentario" class="form-control" rows="3"
+                                    placeholder="Comparte tu opinión sobre este libro..." maxlength="1000"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" id="submitReviewBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <line x1="22" y1="2" x2="11" y2="13" />
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                </svg>
+                                Publicar reseña
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="card" style="margin-top: 1rem;">
+                    <div style="padding: 1.25rem; text-align: center; color: var(--text-muted);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"
+                            style="display:inline;vertical-align:middle;margin-right:0.3rem;">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Ya has enviado tu reseña para este libro.
+                    </div>
+                </div>
+            <?php endif; ?>
+        <?php else: ?>
+            <div class="card" style="margin-top: 1rem;">
+                <div style="padding: 1.25rem; text-align: center;">
+                    <a href="<?= BASE_URL ?>/login.php" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                            <polyline points="10 17 15 12 10 7" />
+                            <line x1="15" y1="12" x2="3" y2="12" />
+                        </svg>
+                        Inicia sesión para dejar una reseña
+                    </a>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
 

@@ -155,6 +155,26 @@ class BookService
     }
 
     /**
+     * Agregar reseña a un libro
+     */
+    public function addReview(int $bookId, int $userId, int $rating, string $comment): int
+    {
+        if ($rating < 1 || $rating > 5) {
+            throw new \InvalidArgumentException('La calificación debe ser entre 1 y 5.');
+        }
+
+        if ($this->bookRepository->hasUserReviewed($bookId, $userId)) {
+            throw new \Exception('Ya has enviado una reseña para este libro.');
+        }
+
+        $reviewId = $this->bookRepository->createReview($bookId, $userId, $rating, $comment);
+
+        $this->logger->log($userId, "Reseña creada para libro ID: {$bookId}", 'resenas', $reviewId);
+
+        return $reviewId;
+    }
+
+    /**
      * Estadísticas de libros
      */
     public function getStats(): array

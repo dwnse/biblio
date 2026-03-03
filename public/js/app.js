@@ -189,4 +189,131 @@ document.addEventListener('DOMContentLoaded', () => {
             Toast.show(message, type);
         }
     }
+
+    // ── Star Rating Picker ──
+    const starPicker = document.getElementById('starRatingPicker');
+    const ratingInput = document.getElementById('reviewRatingInput');
+    const ratingLabel = document.getElementById('starRatingLabel');
+
+    if (starPicker && ratingInput) {
+        const stars = starPicker.querySelectorAll('.star-pick');
+        const labels = ['', 'Muy malo', 'Malo', 'Regular', 'Bueno', 'Excelente'];
+
+        stars.forEach(star => {
+            star.addEventListener('mouseenter', () => {
+                const val = parseInt(star.dataset.value);
+                stars.forEach(s => {
+                    const v = parseInt(s.dataset.value);
+                    s.classList.toggle('hovered', v <= val);
+                });
+                if (ratingLabel) ratingLabel.textContent = labels[val] || '';
+            });
+
+            star.addEventListener('click', () => {
+                const val = parseInt(star.dataset.value);
+                ratingInput.value = val;
+                stars.forEach(s => {
+                    const v = parseInt(s.dataset.value);
+                    s.classList.toggle('selected', v <= val);
+                });
+                if (ratingLabel) ratingLabel.textContent = labels[val] || '';
+            });
+        });
+
+        starPicker.addEventListener('mouseleave', () => {
+            const current = parseInt(ratingInput.value);
+            stars.forEach(s => {
+                s.classList.remove('hovered');
+            });
+            if (ratingLabel) {
+                ratingLabel.textContent = current > 0 ? labels[current] : 'Selecciona una calificación';
+            }
+        });
+    }
+
+    // ── Review Form Submit ──
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rating = parseInt(ratingInput?.value || '0');
+            if (rating < 1 || rating > 5) {
+                Toast.show('Selecciona una calificación de 1 a 5 estrellas.', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('submitReviewBtn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Publicando...';
+
+            try {
+                const formData = new FormData(reviewForm);
+                const response = await fetch(reviewForm.getAttribute('action'), { method: 'POST', body: formData });
+                const text = await response.text();
+                let data;
+                try { data = JSON.parse(text); } catch { throw new Error('Error del servidor.'); }
+
+                if (data.success) {
+                    Toast.show(data.message, 'success');
+                    if (data.redirect) {
+                        setTimeout(() => window.location.href = data.redirect, 800);
+                    }
+                } else {
+                    Toast.show(data.message || 'Error al publicar.', 'error');
+                }
+            } catch (err) {
+                Toast.show(err.message || 'Error de conexión.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        });
+    }
+
+    // ── Cover Image Upload Preview ──
+    const coverFileInput = document.getElementById('portada_file');
+    const coverPreview = document.getElementById('coverPreview');
+    const coverUploadArea = document.getElementById('coverUploadArea');
+
+    if (coverFileInput) {
+        // Click area triggers file input
+        if (coverUploadArea) {
+            coverUploadArea.addEventListener('click', () => coverFileInput.click());
+        }
+
+        coverFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                Toast.show('Por favor selecciona un archivo de imagen.', 'warning');
+                coverFileInput.value = '';
+                return;
+            }
+
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                Toast.show('La imagen no debe superar los 5MB.', 'warning');
+                coverFileInput.value = '';
+                return;
+            }
+
+            // Show preview
+            if (coverPreview) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    coverPreview.innerHTML = `<img src="${ev.target.result}" alt="Vista previa">`;
+                    coverPreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Update upload area text
+            if (coverUploadArea) {
+                coverUploadArea.querySelector('p').textContent = file.name;
+            }
+        });
+    }
 });

@@ -157,4 +157,27 @@ class BookRepository extends BaseRepository
         $stmt->execute(['estado' => $estado]);
         return (int) $stmt->fetch()['total'];
     }
+
+    public function createReview(int $bookId, int $userId, int $rating, string $comment): int
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO resenas (id_libro, id_usuario, calificacion, comentario) VALUES (:libro, :usuario, :cal, :com)"
+        );
+        $stmt->execute([
+            'libro' => $bookId,
+            'usuario' => $userId,
+            'cal' => $rating,
+            'com' => $comment,
+        ]);
+        return (int) $this->db->lastInsertId();
+    }
+
+    public function hasUserReviewed(int $bookId, int $userId): bool
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) as total FROM resenas WHERE id_libro = :libro AND id_usuario = :usuario"
+        );
+        $stmt->execute(['libro' => $bookId, 'usuario' => $userId]);
+        return (int) $stmt->fetch()['total'] > 0;
+    }
 }

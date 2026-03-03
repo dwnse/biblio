@@ -37,6 +37,26 @@ try {
             if ($method !== 'POST')
                 throw new \Exception('Método no permitido');
 
+            // Handle cover image upload
+            if (isset($_FILES['portada_file']) && $_FILES['portada_file']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['portada_file'];
+                $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                if (!in_array($file['type'], $allowed)) {
+                    Helpers::jsonResponse(['success' => false, 'message' => 'Solo se permiten imágenes JPG, PNG, WebP o GIF.']);
+                }
+                if ($file['size'] > 5 * 1024 * 1024) {
+                    Helpers::jsonResponse(['success' => false, 'message' => 'La imagen no debe superar los 5MB.']);
+                }
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $filename = 'cover_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                $uploadDir = __DIR__ . '/../uploads/covers/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $destination = $uploadDir . $filename;
+                if (move_uploaded_file($file['tmp_name'], $destination)) {
+                    $_POST['portada_url'] = BASE_URL . '/uploads/covers/' . $filename;
+                }
+            }
+
             $validator = new Validator($_POST);
             $validator
                 ->required('titulo', 'Título')
@@ -56,10 +76,6 @@ try {
             if (isset($_POST['cantidad_disponible'])) {
                 $validator->numeric('cantidad_disponible', 'Cantidad')
                           ->min('cantidad_disponible', 0, 'Cantidad');
-            }
-
-            if (!empty($_POST['portada_url'])) {
-                $validator->url('portada_url', 'URL de portada')->maxLength('portada_url', 255);
             }
 
             if (!empty($_POST['archivo_url'])) {
@@ -86,6 +102,27 @@ try {
                 throw new \Exception('ID de libro inválido');
 
             $validator = new Validator($_POST);
+
+            // Handle cover image upload
+            if (isset($_FILES['portada_file']) && $_FILES['portada_file']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['portada_file'];
+                $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                if (!in_array($file['type'], $allowed)) {
+                    Helpers::jsonResponse(['success' => false, 'message' => 'Solo se permiten imágenes JPG, PNG, WebP o GIF.']);
+                }
+                if ($file['size'] > 5 * 1024 * 1024) {
+                    Helpers::jsonResponse(['success' => false, 'message' => 'La imagen no debe superar los 5MB.']);
+                }
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $filename = 'cover_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                $uploadDir = __DIR__ . '/../uploads/covers/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $destination = $uploadDir . $filename;
+                if (move_uploaded_file($file['tmp_name'], $destination)) {
+                    $_POST['portada_url'] = BASE_URL . '/uploads/covers/' . $filename;
+                }
+            }
+
             $validator
                 ->required('titulo', 'Título')
                 ->minLength('titulo', 2, 'Título')
@@ -104,10 +141,6 @@ try {
             if (isset($_POST['cantidad_disponible'])) {
                 $validator->numeric('cantidad_disponible', 'Cantidad')
                           ->min('cantidad_disponible', 0, 'Cantidad');
-            }
-
-            if (!empty($_POST['portada_url'])) {
-                $validator->url('portada_url', 'URL de portada')->maxLength('portada_url', 255);
             }
 
             if (!empty($_POST['archivo_url'])) {

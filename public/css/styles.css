@@ -1567,6 +1567,80 @@ select.form-control {
     line-height: 1.75;
 }
 
+/* ── Star Rating Input (interactive picker) ── */
+.star-rating-input {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.star-rating-input .star-pick {
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.star-rating-input .star-pick:hover,
+.star-rating-input .star-pick.hovered {
+    color: #fbbf24;
+    fill: #fbbf24;
+    transform: scale(1.15);
+}
+
+.star-rating-input .star-pick.selected {
+    color: #fbbf24;
+    fill: #fbbf24;
+}
+
+.star-rating-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-left: 0.5rem;
+}
+
+/* ── Image Upload Preview ── */
+.cover-upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: var(--bg-hover);
+}
+
+.cover-upload-area:hover {
+    border-color: var(--accent);
+    background: var(--accent-glow2);
+}
+
+.cover-upload-area svg {
+    width: 40px;
+    height: 40px;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.cover-upload-area p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.cover-preview {
+    margin-top: 0.75rem;
+    max-width: 200px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.cover-preview img {
+    width: 100%;
+    display: block;
+}
+
 /* ── Footer ── */
 .footer {
     background: var(--bg-secondary);
