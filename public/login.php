@@ -39,12 +39,11 @@ $flash = Helpers::getFlash();
 
         <div class="auth-card">
             <div class="auth-logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
                 </svg>
                 <h1 class="text-gradient">BiblioDigital</h1>
-                <p>Accede a tu biblioteca personal</p>
+                <p>Descubre y lee sin límites</p>
             </div>
 
             <form id="loginForm" action="<?= BASE_URL ?>/api/auth.php" method="POST">
@@ -53,9 +52,9 @@ $flash = Helpers::getFlash();
                 <div class="form-group">
                     <label class="form-label" for="email">Correo electrónico</label>
                     <div class="input-icon-wrapper">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                            <polyline points="22,6 12,13 2,6" />
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
                         </svg>
                         <input type="email" id="email" name="email" class="form-control" placeholder="tu@email.com"
                             required autocomplete="email" maxlength="150">
@@ -65,9 +64,9 @@ $flash = Helpers::getFlash();
                 <div class="form-group">
                     <label class="form-label" for="contrasena">Contraseña</label>
                     <div class="input-icon-wrapper">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                         </svg>
                         <input type="password" id="contrasena" name="contrasena" class="form-control"
                             placeholder="••••••••" required minlength="6" maxlength="255" autocomplete="current-password">
@@ -75,12 +74,12 @@ $flash = Helpers::getFlash();
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block btn-lg mt-2">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                        <polyline points="10 17 15 12 10 7" />
-                        <line x1="15" y1="12" x2="3" y2="12" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
                     </svg>
-                    Iniciar Sesión
+                    Ingresar a mi cuenta
                 </button>
             </form>
 

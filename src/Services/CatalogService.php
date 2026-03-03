@@ -37,7 +37,7 @@ class CatalogService
     public function createAuthor(array $data, int $userId): int
     {
         $id = $this->authorRepo->create([
-            'nombre' => $data['nombre'],
+            'nombres' => $data['nombre'],
             'nacionalidad' => $data['nacionalidad'] ?? null,
             'fecha_nacimiento' => !empty($data['fecha_nacimiento']) ? $data['fecha_nacimiento'] : null,
             'estado' => $data['estado'] ?? 'activo'
@@ -50,7 +50,7 @@ class CatalogService
     public function updateAuthor(int $id, array $data, int $userId): void
     {
         $this->authorRepo->update($id, [
-            'nombre' => $data['nombre'],
+            'nombres' => $data['nombre'],
             'nacionalidad' => $data['nacionalidad'] ?? null,
             'fecha_nacimiento' => !empty($data['fecha_nacimiento']) ? $data['fecha_nacimiento'] : null,
             'estado' => $data['estado'] ?? 'activo'
@@ -130,8 +130,8 @@ class CatalogService
         $id = $this->editRepo->create([
             'nombre' => $data['nombre'],
             'pais' => $data['pais'] ?? null,
-            'contacto_telefono' => $data['contacto_telefono'] ?? null,
-            'contacto_email' => $data['contacto_email'] ?? null,
+            'telefono' => $data['contacto_telefono'] ?? null,
+            'email' => $data['contacto_email'] ?? null,
             'sitio_web' => $data['sitio_web'] ?? null,
             'estado' => $data['estado'] ?? 'activa'
         ]);
@@ -145,8 +145,8 @@ class CatalogService
         $this->editRepo->update($id, [
             'nombre' => $data['nombre'],
             'pais' => $data['pais'] ?? null,
-            'contacto_telefono' => $data['contacto_telefono'] ?? null,
-            'contacto_email' => $data['contacto_email'] ?? null,
+            'telefono' => $data['contacto_telefono'] ?? null,
+            'email' => $data['contacto_email'] ?? null,
             'sitio_web' => $data['sitio_web'] ?? null,
             'estado' => $data['estado'] ?? 'activa'
         ]);

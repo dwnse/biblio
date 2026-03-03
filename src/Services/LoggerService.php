@@ -39,6 +39,28 @@ class LoggerService
     }
 
     /**
+     * Registrar una acción con formato descriptivo (usado por CatalogService)
+     */
+    public function logAction(int $userId, string $accion, string $descripcion, ?int $idRegistro = null): void
+    {
+        // Mapear la acción al nombre de tabla afectada
+        $tablaMap = [
+            'CREAR_AUTOR' => 'autores',
+            'ACTUALIZAR_AUTOR' => 'autores',
+            'ELIMINAR_AUTOR' => 'autores',
+            'CREAR_CATEGORIA' => 'categorias',
+            'ACTUALIZAR_CATEGORIA' => 'categorias',
+            'ELIMINAR_CATEGORIA' => 'categorias',
+            'CREAR_EDITORIAL' => 'editoriales',
+            'ACTUALIZAR_EDITORIAL' => 'editoriales',
+            'ELIMINAR_EDITORIAL' => 'editoriales',
+        ];
+
+        $tabla = $tablaMap[$accion] ?? 'general';
+        $this->log($userId, "{$accion}: {$descripcion}", $tabla, $idRegistro);
+    }
+
+    /**
      * Obtener logs con filtros
      */
     public function getLogs(?int $userId = null, ?string $fechaDesde = null, ?string $fechaHasta = null, int $limit = 50): array

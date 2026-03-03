@@ -70,12 +70,16 @@ class UserService
         // Actualizar último acceso
         $this->userRepository->updateLastAccess((int) $user['id_usuario']);
 
+        // Regenerar ID de sesión para prevenir Session Fixation
+        session_regenerate_id(true);
+
         // Crear sesión
         $_SESSION['user_id'] = $user['id_usuario'];
         $_SESSION['user_name'] = $user['nombre'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_role'] = (int) $user['id_rol'];
         $_SESSION['user_role_name'] = $user['rol_nombre'];
+        $_SESSION['last_activity'] = time();
 
         $this->logger->log(
             (int) $user['id_usuario'],

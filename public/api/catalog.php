@@ -1,6 +1,16 @@
 <?php
 declare(strict_types=1);
 
+// Suppress HTML error output for JSON API
+ini_set('display_errors', '0');
+ini_set('html_errors', '0');
+error_reporting(E_ALL);
+
+header('Content-Type: application/json; charset=utf-8');
+
+// Start output buffering to capture any stray output
+ob_start();
+
 require_once __DIR__ . '/../../config/constants.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -8,10 +18,13 @@ use App\Services\CatalogService;
 use App\Utils\Helpers;
 use App\Utils\Validator;
 
-header('Content-Type: application/json; charset=utf-8');
-
-Helpers::requireLogin();
-Helpers::requireAdmin();
+// Check authentication - return JSON error instead of redirect for API calls
+if (!Helpers::isLoggedIn()) {
+    Helpers::jsonResponse(['success' => false, 'message' => 'Debes iniciar sesión para realizar esta acción.']);
+}
+if (!Helpers::isAdmin()) {
+    Helpers::jsonResponse(['success' => false, 'message' => 'No tienes permisos para realizar esta acción.']);
+}
 
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
@@ -54,8 +67,7 @@ try {
             }
 
             if ($validator->fails()) {
-                echo json_encode(['success' => false, 'message' => $validator->getFirstError()]);
-                exit;
+                Helpers::jsonResponse(['success' => false, 'message' => $validator->getFirstError()]);
             }
         }
 
@@ -65,8 +77,7 @@ try {
                 elseif ($entity === 'category') $catalogService->createCategory($_POST, $userId);
                 elseif ($entity === 'editorial') $catalogService->createEditorial($_POST, $userId);
                 Helpers::setFlash('success', ucfirst($entity) . ' creado(a) correctamente.');
-                echo json_encode(['success' => true, 'redirect' => BASE_URL . "/admin/" . ($entity === 'category' ? 'categorias' : $entity . 'es') . ".php"]);
-                break;
+                Helpers::jsonResponse(['success' => true, 'redirect' => BASE_URL . "/admin/" . ($entity === 'category' ? 'categorias' : $entity . 'es') . ".php"]);
 
             case 'update':
                 if (!$id) throw new \Exception('ID inválido');
@@ -74,16 +85,14 @@ try {
                 elseif ($entity === 'category') $catalogService->updateCategory($id, $_POST, $userId);
                 elseif ($entity === 'editorial') $catalogService->updateEditorial($id, $_POST, $userId);
                 Helpers::setFlash('success', ucfirst($entity) . ' actualizado(a) correctamente.');
-                echo json_encode(['success' => true, 'redirect' => BASE_URL . "/admin/" . ($entity === 'category' ? 'categorias' : $entity . 'es') . ".php"]);
-                break;
+                Helpers::jsonResponse(['success' => true, 'redirect' => BASE_URL . "/admin/" . ($entity === 'category' ? 'categorias' : $entity . 'es') . ".php"]);
 
             case 'delete':
                 if (!$id) throw new \Exception('ID inválido');
                 if ($entity === 'author') $catalogService->deleteAuthor($id, $userId);
                 elseif ($entity === 'category') $catalogService->deleteCategory($id, $userId);
                 elseif ($entity === 'editorial') $catalogService->deleteEditorial($id, $userId);
-                echo json_encode(['success' => true, 'message' => ucfirst($entity) . ' eliminado(a) correctamente.']);
-                break;
+                Helpers::jsonResponse(['success' => true, 'message' => ucfirst($entity) . ' eliminado(a) correctamente.']);
 
             default:
                 throw new \Exception('Acción no permitida');
@@ -92,9 +101,9 @@ try {
         throw new \Exception('Método HTTP no soportado para esta API.');
     }
 
-} catch (\Exception $e) {
-    echo json_encode([
+} catch (\Throwable $e) {
+    Helpers::jsonResponse([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => APP_ENV === 'development' ? $e->getMessage() : 'Error interno del servidor.'
     ]);
 }

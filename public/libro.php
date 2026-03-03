@@ -119,9 +119,15 @@ require_once __DIR__ . '/includes/header.php';
                 <?php endif; ?>
                 <span class="meta-item">
                     <?php if ($bookObj->isDisponible()): ?>
-                        <span class="badge badge-success">✓ Disponible</span>
+                        <span class="badge badge-success">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
+                            Disponible
+                        </span>
                     <?php else: ?>
-                        <span class="badge badge-danger">✗ No disponible</span>
+                        <span class="badge badge-danger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            No disponible
+                        </span>
                     <?php endif; ?>
                 </span>
             </div>

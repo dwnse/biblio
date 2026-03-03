@@ -28,7 +28,27 @@ if (APP_ENV === 'development') {
     ini_set('display_errors', '0');
 }
 
-// Iniciar sesión si no está activa
+// Configuración segura de sesiones
 if (session_status() === PHP_SESSION_NONE) {
+    $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+
+    session_set_cookie_params([
+        'lifetime' => 1800,           // 30 minutos
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => $isSecure,      // Solo HTTPS si está disponible
+        'httponly'  => true,           // No accesible via JavaScript
+        'samesite'  => 'Lax',         // Protección CSRF básica
+    ]);
+
     session_start();
+
+    // Control de expiración de sesión
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > 1800) {
+        // Sesión expirada: destruir y redirigir
+        session_unset();
+        session_destroy();
+        session_start(); // Reiniciar sesión limpia
+    }
+    $_SESSION['last_activity'] = time();
 }

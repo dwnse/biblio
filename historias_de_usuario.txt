@@ -1,0 +1,92 @@
+================================================================================
+                        HISTORIAS DE USUARIO - BIBLIODIGITAL
+================================================================================
+
+--------------------------------------------------------------------------------
+HU-01: Registro Simplificado de Usuarios
+Prioridad: Alta
+Rol: Visitante
+Historia: "Como visitante, quiero poder registrarme en la plataforma usando únicamente mi correo electrónico y una contraseña, para crear una cuenta rápidamente sin tener que proporcionar datos personales adicionales."
+Criterios de Verificación:
+- El formulario de registro solo debe mostrar los campos "Correo", "Contraseña" y "Confirmar Contraseña".
+- Al enviar el formulario, el sistema autogenera un "Nombre" temporal extrayendo el texto antes de la arroba (@) del correo.
+- Se debe validar que el correo tenga un formato válido y la contraseña mínimo 6 caracteres.
+
+--------------------------------------------------------------------------------
+HU-02: Acceso de Invitados al Catálogo
+Prioridad: Alta
+Rol: Visitante
+Historia: "Como visitante, quiero poder navegar por el catálogo de libros sin necesidad de iniciar sesión, para explorar el contenido disponible antes de decidir crear una cuenta."
+Criterios de Verificación:
+- Al acceder a la ruta base (/) del proyecto, el sistema redirige a /catalogo.php (Landing) en lugar de al /login.php.
+- La barra de navegación superior muestra botones públicos de "Entrar" y "Registrarse" a los invitados.
+- Se pueden visualizar los detalles de un libro (libro.php) sin poseer una cuenta ni estar logeado.
+
+--------------------------------------------------------------------------------
+HU-03: Restricción de Descarga de Libros
+Prioridad: Alta
+Rol: Visitante / Sistema
+Historia: "Como administrador, quiero que solo los usuarios autenticados puedan descargar los archivos PDF de los libros, para incentivar el registro y proteger los activos de la plataforma."
+Criterios de Verificación:
+- Si el usuario NO tiene sesión iniciada, el botón de descarga en la página de detalles del libro cambia su texto a "Inicia sesión para descargar".
+- Al hacer clic en dicho botón, el usuario invitado es enviado a la pantalla de login.
+- Si el usuario SÍ tiene sesión iniciada, el botón verde de descarga funciona normalmente enviándolo a la URL del archivo PDF.
+
+--------------------------------------------------------------------------------
+HU-04: Panel de Control Administrativo (Dashboard)
+Prioridad: Media
+Rol: Administrador
+Historia: "Como administrador, quiero un panel principal que me muestre métricas globales del sistema, para tener un resumen rápido del estado de la biblioteca digital."
+Criterios de Verificación:
+- El dashboard (admin/index.php) renderiza contadores numéricos mostrando en tiempo real el total de: Libros, Usuarios, Autores y Categorías.
+- La interfaz incluye botones de "Acceso Rápido" que redirigen a los módulos de gestión (Libros, Autores, Categorías, Editoriales).
+- La página está asegurada y solo es accesible si la variable de sesión confirma el rol de 'admin'.
+
+--------------------------------------------------------------------------------
+HU-05: Gestión de Autores (CRUD)
+Prioridad: Alta
+Rol: Administrador
+Historia: "Como administrador, quiero poder listar, crear, editar y eliminar Autores, para mantener la base de datos de los creadores literarios actualizada de forma atómica."
+Criterios de Verificación:
+- Existe una vista en tabla mostrando todos los autores con nombre, nacionalidad y estado (Activo/Inactivo).
+- El sistema cuenta con un formulario que captura y valida la Nacionalidad, Nombre y Fecha de Nacimiento.
+- Intentar eliminar un autor (vía la API catalog.php) que ya tenga un libro asignado en la base de datos disparará una excepción capturada, mostrando un error de protección referencial.
+
+--------------------------------------------------------------------------------
+HU-06: Gestión de Categorías (CRUD)
+Prioridad: Media
+Rol: Administrador
+Historia: "Como administrador, quiero poder definir y editar Categorías Literarias o Géneros, para poder clasificar correctamente los libros del catálogo de forma relacional."
+Criterios de Verificación:
+- Existe una lista de categorías en el panel.
+- El formulario asíncrono permite crear/editar su Nombre (Campo obligatorio con maxlength) y Descripción opcional.
+- Las categorías poseen estados para ser dadas de baja temporalmente sin borrarlas.
+
+--------------------------------------------------------------------------------
+HU-07: Gestión de Editoriales (CRUD)
+Prioridad: Alta
+Rol: Administrador
+Historia: "Como administrador, quiero gestionar un directorio de Casas Editoriales, para registrar atributos extra de quién publica las obras (contacto y la URL de su red)."
+Criterios de Verificación:
+- El formulario captura el Nombre, País, Teléfono, Correo Electrónico y el Sitio Web oficial de la casa editorial.
+- El backend evalúa la cadena ingresada en "Sitio Web" pasando por filter_var($url, FILTER_VALIDATE_URL) y rechaza la carga si no es válido.
+- Visualmente el sistema muestra iconos indicativos de comunicación en la tabla de resultados.
+
+--------------------------------------------------------------------------------
+HU-08: Gestión Central de Libros
+Prioridad: Alta
+Rol: Administrador
+Historia: "Como administrador, quiero poder registrar nuevos libros completos detallando toda su taxonomía (título, ISBN, autor, categoría) para expandir el inventario."
+Criterios de Verificación:
+- El módulo 'libro_form.php' captura de manera segura metadatos complejos.
+- El servidor impide que la propiedad "Año de publicación" corresponda a un número mayor que el año actual del sistema operativo.
+- Se valida semánticamente mediante una expresión regular (RegEx) que la caja de texto referente a 'ISBN' solo admita un formato de 10 o 13 dígitos, protegiendo la indexación futura.
+
+--------------------------------------------------------------------------------
+HU-09: Doble Capa de Validación Estratégica
+Prioridad: Crítica
+Rol: Usuario / Sistema
+Historia: "Como plataforma de software, necesito obligar a que todos los datos transaccionados superen una validación estricta en tiempo real en la vista, y otra de respaldo en el servidor, para blindar la sanidad de la base de datos."
+Criterios de Verificación:
+- El archivo JavaScript (`app.js`) utiliza la API nativa de los navegadores invocando `form.checkValidity()` antes de ejecutar fetch(), deteniendo las tareas cuando falten constraints como `minlength`, `maxlength` o `require`.
+- La clase PHP `Validator.php` implementa métodos para verificar numéricos, longitudes de cadenas, comparativas y formatos regex, devolviendo siempre un JSON 400 amistoso (`success: false`) para ser interpretado por los "Toasts" en la IU sin romper la experiencia.

@@ -1,6 +1,16 @@
 <?php
 declare(strict_types=1);
 
+// Suppress HTML error output for JSON API
+ini_set('display_errors', '0');
+ini_set('html_errors', '0');
+error_reporting(E_ALL);
+
+header('Content-Type: application/json; charset=utf-8');
+
+// Start output buffering to capture any stray output
+ob_start();
+
 require_once __DIR__ . '/../../config/constants.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -8,10 +18,13 @@ use App\Services\BookService;
 use App\Utils\Helpers;
 use App\Utils\Validator;
 
-header('Content-Type: application/json; charset=utf-8');
-
-Helpers::requireLogin();
-Helpers::requireAdmin();
+// Check authentication - return JSON error instead of redirect for API calls
+if (!Helpers::isLoggedIn()) {
+    Helpers::jsonResponse(['success' => false, 'message' => 'Debes iniciar sesión para realizar esta acción.']);
+}
+if (!Helpers::isAdmin()) {
+    Helpers::jsonResponse(['success' => false, 'message' => 'No tienes permisos para realizar esta acción.']);
+}
 
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
@@ -54,8 +67,7 @@ try {
             }
 
             if ($validator->fails()) {
-                echo json_encode(['success' => false, 'message' => $validator->getFirstError()]);
-                exit;
+                Helpers::jsonResponse(['success' => false, 'message' => $validator->getFirstError()]);
             }
 
             $authorIds = isset($_POST['autores']) ? (array) $_POST['autores'] : [];
@@ -63,7 +75,7 @@ try {
 
             $bookId = $bookService->createBook($_POST, $authorIds, $categoryIds);
             Helpers::setFlash('success', 'Libro registrado correctamente.');
-            echo json_encode(['success' => true, 'message' => 'Libro creado', 'id' => $bookId, 'redirect' => BASE_URL . '/admin/libros.php']);
+            Helpers::jsonResponse(['success' => true, 'message' => 'Libro creado', 'id' => $bookId, 'redirect' => BASE_URL . '/admin/libros.php']);
             break;
 
         case 'update':
@@ -103,8 +115,7 @@ try {
             }
 
             if ($validator->fails()) {
-                echo json_encode(['success' => false, 'message' => $validator->getFirstError()]);
-                exit;
+                Helpers::jsonResponse(['success' => false, 'message' => $validator->getFirstError()]);
             }
 
             $authorIds = isset($_POST['autores']) ? (array) $_POST['autores'] : [];
@@ -112,7 +123,7 @@ try {
 
             $bookService->updateBook($id, $_POST, $authorIds, $categoryIds);
             Helpers::setFlash('success', 'Libro actualizado correctamente.');
-            echo json_encode(['success' => true, 'message' => 'Libro actualizado', 'redirect' => BASE_URL . '/admin/libros.php']);
+            Helpers::jsonResponse(['success' => true, 'message' => 'Libro actualizado', 'redirect' => BASE_URL . '/admin/libros.php']);
             break;
 
         case 'delete':
@@ -122,14 +133,14 @@ try {
 
             $bookService->deleteBook($id);
             Helpers::setFlash('success', 'Libro eliminado correctamente.');
-            echo json_encode(['success' => true, 'message' => 'Libro eliminado']);
+            Helpers::jsonResponse(['success' => true, 'message' => 'Libro eliminado']);
             break;
 
         default:
-            echo json_encode(['success' => false, 'message' => 'Acción no válida']);
+            Helpers::jsonResponse(['success' => false, 'message' => 'Acción no válida']);
     }
 } catch (\App\Exceptions\BookNotFoundException $e) {
-    echo json_encode(['success' => false, 'message' => $e->getUserMessage()]);
-} catch (\Exception $e) {
-    echo json_encode(['success' => false, 'message' => APP_ENV === 'development' ? $e->getMessage() : 'Error interno.']);
+    Helpers::jsonResponse(['success' => false, 'message' => $e->getUserMessage()]);
+} catch (\Throwable $e) {
+    Helpers::jsonResponse(['success' => false, 'message' => APP_ENV === 'development' ? $e->getMessage() : 'Error interno.']);
 }

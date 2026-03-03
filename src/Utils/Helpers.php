@@ -6,6 +6,20 @@ namespace App\Utils;
 class Helpers
 {
     /**
+     * Respuesta JSON segura (limpia buffer para evitar HTML corrupto)
+     */
+    public static function jsonResponse(array $data): void
+    {
+        $strayOutput = ob_get_clean();
+        if (!empty($strayOutput) && defined('APP_ENV') && APP_ENV === 'development') {
+            error_log('Stray output before JSON: ' . $strayOutput);
+        }
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($data);
+        exit;
+    }
+
+    /**
      * Redirigir a una URL
      */
     public static function redirect(string $url): void
@@ -49,7 +63,8 @@ class Helpers
         self::requireLogin();
         if (!self::isAdmin()) {
             self::setFlash('error', 'No tienes permisos para acceder a esta sección.');
-            self::redirect('/catalogo.php');
+            header("Location: " . BASE_URL . "/403.php");
+            exit;
         }
     }
 

@@ -27,8 +27,14 @@ require_once __DIR__ . '/includes/header.php';
 <div class="container">
     <div class="page-header animate-fadeIn">
         <div>
-            <h1>📚 Catálogo de Libros</h1>
-            <p>Explora nuestra colección de libros digitales</p>
+            <h1>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+                Catálogo de Libros
+            </h1>
+            <p>Explora nuestra colección de libros digitales.</p>
         </div>
     </div>
 

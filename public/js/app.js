@@ -76,16 +76,26 @@ function handleForm(formId, options = {}) {
                 method: 'POST',
                 body: formData,
             });
-            const data = await response.json();
+
+            // Safely parse JSON — handle cases where server returns HTML errors
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (parseError) {
+                console.error('Server response is not valid JSON:', text);
+                Toast.show('Error del servidor. Por favor, recarga la página e intenta de nuevo.', 'error');
+                return;
+            }
 
             if (data.success) {
-                Toast.show(data.message, 'success');
+                Toast.show(data.message || 'Operación exitosa', 'success');
                 if (data.redirect) {
                     setTimeout(() => window.location.href = data.redirect, 800);
                 }
                 if (options.onSuccess) options.onSuccess(data);
             } else {
-                Toast.show(data.message, 'error');
+                Toast.show(data.message || 'Ocurrió un error.', 'error');
                 if (options.onError) options.onError(data);
             }
         } catch (error) {
@@ -120,13 +130,21 @@ function initMobileNav() {
 function confirmDelete(url, itemName = 'este elemento') {
     if (confirm(`¿Estás seguro de que deseas eliminar ${itemName}? Esta acción no se puede deshacer.`)) {
         fetch(url, { method: 'POST' })
-            .then(r => r.json())
-            .then(data => {
+            .then(r => r.text())
+            .then(text => {
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('Server response is not valid JSON:', text);
+                    Toast.show('Error del servidor al eliminar.', 'error');
+                    return;
+                }
                 if (data.success) {
-                    Toast.show(data.message, 'success');
+                    Toast.show(data.message || 'Eliminado correctamente.', 'success');
                     setTimeout(() => location.reload(), 800);
                 } else {
-                    Toast.show(data.message, 'error');
+                    Toast.show(data.message || 'No se pudo eliminar.', 'error');
                 }
             })
             .catch(() => Toast.show('Error al eliminar.', 'error'));

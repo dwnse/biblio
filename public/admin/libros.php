@@ -19,8 +19,14 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="container">
     <div class="page-header animate-fadeIn">
         <div>
-            <h1>📚 Gestionar Libros</h1>
-            <p>Administra el catálogo de la biblioteca digital</p>
+            <h1>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+                Libros
+            </h1>
+            <p>Administra el catálogo de la biblioteca digital.</p>
         </div>
         <a href="<?= BASE_URL ?>/admin/libro_form.php" class="btn btn-primary">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">

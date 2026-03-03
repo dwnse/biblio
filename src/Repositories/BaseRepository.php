@@ -44,8 +44,8 @@ abstract class BaseRepository implements IRepository
     public function update(int $id, array $data): bool
     {
         $setClause = implode(', ', array_map(fn($key) => "{$key} = :{$key}", array_keys($data)));
-        $sql = "UPDATE {$this->table} SET {$setClause} WHERE {$this->primaryKey} = :id";
-        $data['id'] = $id;
+        $sql = "UPDATE {$this->table} SET {$setClause} WHERE {$this->primaryKey} = :{$this->primaryKey}";
+        $data[$this->primaryKey] = $id;
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($data);
     }
