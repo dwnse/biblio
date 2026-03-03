@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch(reviewForm.getAttribute('action'), { method: 'POST', body: formData });
                 const text = await response.text();
                 let data;
-                try { data = JSON.parse(text); } catch { throw new Error('Error del servidor.'); }
+                try { data = JSON.parse(text); } catch (e) { throw new Error('Error del servidor.'); }
 
                 if (data.success) {
                     Toast.show(data.message, 'success');

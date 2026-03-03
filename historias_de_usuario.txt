@@ -1,92 +1,465 @@
 ================================================================================
-                        HISTORIAS DE USUARIO - BIBLIODIGITAL
+                    HISTORIAS DE USUARIO - BIBLIODIGITAL
+                    (Actualizado: 02/03/2026)
+================================================================================
+
+================================================================================
+                           MÓDULO DE AUTENTICACIÓN
 ================================================================================
 
 --------------------------------------------------------------------------------
 HU-01: Registro Simplificado de Usuarios
 Prioridad: Alta
 Rol: Visitante
-Historia: "Como visitante, quiero poder registrarme en la plataforma usando únicamente mi correo electrónico y una contraseña, para crear una cuenta rápidamente sin tener que proporcionar datos personales adicionales."
+Historia: "Como visitante, quiero poder registrarme en la plataforma usando
+únicamente mi correo electrónico y una contraseña, para crear una cuenta
+rápidamente sin tener que proporcionar datos personales adicionales."
 Criterios de Verificación:
-- El formulario de registro solo debe mostrar los campos "Correo", "Contraseña" y "Confirmar Contraseña".
-- Al enviar el formulario, el sistema autogenera un "Nombre" temporal extrayendo el texto antes de la arroba (@) del correo.
-- Se debe validar que el correo tenga un formato válido y la contraseña mínimo 6 caracteres.
+  1. El formulario de registro (register.php) solo muestra los campos "Correo",
+     "Contraseña" y "Confirmar Contraseña".
+  2. Al enviar el formulario, el sistema autogenera un "Nombre" temporal
+     extrayendo el texto antes de la arroba (@) del correo.
+  3. Se valida que el correo tenga formato válido y la contraseña mínimo 6
+     caracteres (Validator.php: email(), minLength()).
+  4. Se verifica que el correo no esté ya registrado en la BD
+     (UserRepository::emailExists()).
+  5. La contraseña es almacenada con hash bcrypt (password_hash con
+     PASSWORD_BCRYPT).
+  6. Al registrarse exitosamente, se asigna rol "Usuario" (id_rol = 2) por
+     defecto y se registra la acción en la tabla de logs.
+  7. Las contraseñas deben coincidir (Validator::matches()).
 
 --------------------------------------------------------------------------------
-HU-02: Acceso de Invitados al Catálogo
+HU-02: Inicio de Sesión de Usuarios
+Prioridad: Alta
+Rol: Usuario registrado
+Historia: "Como usuario registrado, quiero poder iniciar sesión con mi correo
+y contraseña, para acceder a las funcionalidades exclusivas de la plataforma
+como descargar libros y escribir reseñas."
+Criterios de Verificación:
+  1. El formulario de login (login.php) solicita "Correo" y "Contraseña".
+  2. El sistema verifica las credenciales contra la BD y valida el hash con
+     password_verify().
+  3. Si el usuario tiene estado 'inactivo', se rechaza el acceso con un mensaje
+     claro: "Tu cuenta ha sido desactivada".
+  4. Al iniciar sesión, se regenera el ID de sesión (session_regenerate_id)
+     para prevenir Session Fixation.
+  5. Se almacenan en sesión: user_id, user_name, user_email, user_role,
+     user_role_name y last_activity.
+  6. Se actualiza el campo ultimo_acceso del usuario en la BD.
+  7. La acción de inicio de sesión queda registrada en la tabla de logs.
+
+--------------------------------------------------------------------------------
+HU-03: Cierre de Sesión
+Prioridad: Media
+Rol: Usuario autenticado
+Historia: "Como usuario autenticado, quiero poder cerrar mi sesión de forma
+segura, para proteger mi cuenta cuando termine de usar la plataforma."
+Criterios de Verificación:
+  1. Existe un endpoint API (api/logout.php) que procesa el cierre de sesión.
+  2. Al cerrar sesión se destruyen todas las variables de sesión (session_unset
+     y session_destroy).
+  3. La acción de cierre de sesión queda registrada en la tabla de logs antes
+     de destruir la sesión.
+  4. Tras el cierre, el usuario es redirigido al catálogo público.
+
+================================================================================
+                           MÓDULO DE CATÁLOGO PÚBLICO
+================================================================================
+
+--------------------------------------------------------------------------------
+HU-04: Acceso de Invitados al Catálogo
 Prioridad: Alta
 Rol: Visitante
-Historia: "Como visitante, quiero poder navegar por el catálogo de libros sin necesidad de iniciar sesión, para explorar el contenido disponible antes de decidir crear una cuenta."
+Historia: "Como visitante, quiero poder navegar por el catálogo de libros sin
+necesidad de iniciar sesión, para explorar el contenido disponible antes de
+decidir crear una cuenta."
 Criterios de Verificación:
-- Al acceder a la ruta base (/) del proyecto, el sistema redirige a /catalogo.php (Landing) en lugar de al /login.php.
-- La barra de navegación superior muestra botones públicos de "Entrar" y "Registrarse" a los invitados.
-- Se pueden visualizar los detalles de un libro (libro.php) sin poseer una cuenta ni estar logeado.
+  1. Al acceder a la ruta base (/) del proyecto, el sistema redirige a
+     /catalogo.php (Landing) en lugar de al /login.php.
+  2. La barra de navegación superior muestra botones públicos de "Entrar" y
+     "Registrarse" a los invitados.
+  3. Se pueden visualizar los detalles de un libro (libro.php) sin poseer una
+     cuenta ni estar logueado.
+  4. Las tarjetas de libros muestran: portada (o placeholder), título, autor(es),
+     categoría(s), badge de disponibilidad y calificación promedio con estrellas.
 
 --------------------------------------------------------------------------------
-HU-03: Restricción de Descarga de Libros
+HU-05: Búsqueda y Filtrado de Libros
+Prioridad: Alta
+Rol: Visitante / Usuario
+Historia: "Como visitante o usuario, quiero poder buscar libros por título o
+ISBN y filtrarlos por categoría, para encontrar rápidamente el contenido que
+me interesa."
+Criterios de Verificación:
+  1. El catálogo (catalogo.php) incluye una barra de búsqueda con campo de
+     texto que busca por título e ISBN.
+  2. Existe un selector desplegable (select) con todas las categorías activas
+     que filtra los resultados al cambiar la selección (onchange submit).
+  3. Los filtros de búsqueda y categoría pueden combinarse simultáneamente.
+  4. Si no se encuentran resultados, se muestra un estado vacío con mensaje
+     y un botón "Ver todos los libros" para limpiar los filtros.
+  5. Los parámetros de búsqueda se pasan por query string (GET: q, categoria).
+
+--------------------------------------------------------------------------------
+HU-06: Paginación del Catálogo
+Prioridad: Media
+Rol: Visitante / Usuario
+Historia: "Como visitante o usuario, quiero que el catálogo muestre los libros
+paginados, para navegar eficientemente por grandes cantidades de contenido sin
+cargar todo de una vez."
+Criterios de Verificación:
+  1. El catálogo muestra un máximo de 12 libros por página (configurable en
+     BookService::searchBooks()).
+  2. La paginación aparece al pie del catálogo solo si hay más de una página
+     de resultados.
+  3. Los controles de paginación muestran: botón anterior, números de página
+     (ventana de ±2 páginas) y botón siguiente.
+  4. La paginación conserva los filtros de búsqueda y categoría activos
+     (http_build_query con array_merge de $_GET).
+
+--------------------------------------------------------------------------------
+HU-07: Detalle de Libro
+Prioridad: Alta
+Rol: Visitante / Usuario
+Historia: "Como visitante o usuario, quiero ver la información completa de un
+libro, incluyendo su portada, metadatos y reseñas, para evaluar si me
+interesa descargarlo."
+Criterios de Verificación:
+  1. La página de detalle (libro.php) muestra: portada del libro (o placeholder
+     SVG), título, autores, calificación promedio con estrellas, ISBN, año de
+     publicación, editorial, estado de disponibilidad, categorías como badges
+     y descripción completa.
+  2. Incluye un breadcrumb de navegación para volver al catálogo.
+  3. Muestra la sección de reseñas existentes con nombre del usuario,
+     calificación con estrellas, comentario y fecha.
+  4. Si el libro no existe (ID inválido), se lanza BookNotFoundException y se
+     redirige al catálogo con mensaje flash de error.
+  5. Los datos se sanitizan con htmlspecialchars() antes de renderizarse.
+
+--------------------------------------------------------------------------------
+HU-08: Restricción de Descarga de Libros
 Prioridad: Alta
 Rol: Visitante / Sistema
-Historia: "Como administrador, quiero que solo los usuarios autenticados puedan descargar los archivos PDF de los libros, para incentivar el registro y proteger los activos de la plataforma."
+Historia: "Como administrador, quiero que solo los usuarios autenticados puedan
+descargar los archivos PDF de los libros, para incentivar el registro y
+proteger los activos de la plataforma."
 Criterios de Verificación:
-- Si el usuario NO tiene sesión iniciada, el botón de descarga en la página de detalles del libro cambia su texto a "Inicia sesión para descargar".
-- Al hacer clic en dicho botón, el usuario invitado es enviado a la pantalla de login.
-- Si el usuario SÍ tiene sesión iniciada, el botón verde de descarga funciona normalmente enviándolo a la URL del archivo PDF.
+  1. Si el usuario NO tiene sesión iniciada, el botón de descarga en la página
+     de detalles del libro cambia su texto a "Inicia sesión para descargar".
+  2. Al hacer clic en dicho botón, el usuario invitado es enviado a la
+     pantalla de login.
+  3. Si el usuario SÍ tiene sesión iniciada, el botón verde de descarga
+     funciona normalmente enviándolo a la URL del archivo PDF.
+  4. El botón de descarga solo aparece si el libro está disponible Y tiene un
+     archivo_url asignado.
+
+================================================================================
+                           MÓDULO DE RESEÑAS Y CALIFICACIONES
+================================================================================
 
 --------------------------------------------------------------------------------
-HU-04: Panel de Control Administrativo (Dashboard)
+HU-09: Sistema de Reseñas y Calificaciones
+Prioridad: Alta
+Rol: Usuario autenticado
+Historia: "Como usuario autenticado, quiero poder escribir una reseña y asignar
+una calificación de 1 a 5 estrellas a un libro, para compartir mi opinión con
+otros lectores y contribuir a la comunidad."
+Criterios de Verificación:
+  1. El formulario de reseña (en libro.php) solo es visible para usuarios
+     autenticados (Helpers::isLoggedIn()).
+  2. El sistema de calificación utiliza un picker visual de 5 estrellas
+     interactivo (starRatingPicker) con efectos hover, click y etiquetas
+     descriptivas ("Muy malo", "Malo", "Regular", "Bueno", "Excelente").
+  3. La calificación debe estar entre 1 y 5 (validada en JS y en servidor
+     con Validator: numeric(), min(1), max(5)).
+  4. El comentario (textarea) es opcional pero la calificación es obligatoria.
+  5. Un usuario solo puede enviar UNA reseña por libro (BookRepository::
+     hasUserReviewed() verifica si ya existe una reseña del usuario).
+  6. Si el usuario ya publicó una reseña, el formulario no se muestra.
+  7. La reseña se envía vía AJAX (fetch) al endpoint api/reviews.php con
+     acción 'create', mostrando feedback via Toast.
+  8. Tras publicar exitosamente, se redirige a la página del libro para
+     ver la reseña publicada.
+  9. La acción queda registrada en la tabla de logs.
+
+--------------------------------------------------------------------------------
+HU-10: Visualización de Calificación Promedio
+Prioridad: Media
+Rol: Visitante / Usuario
+Historia: "Como visitante o usuario, quiero ver la calificación promedio de cada
+libro representada con estrellas, para tener una referencia rápida de la
+calidad del contenido."
+Criterios de Verificación:
+  1. El catálogo muestra estrellas de calificación promedio en cada tarjeta
+     de libro (solo si calificacion_promedio > 0).
+  2. La página de detalle del libro muestra las estrellas de calificación
+     promedio con el valor numérico (formato X.X/5).
+  3. El helper renderStars() genera SVGs de estrellas llenas, medias o vacías
+     según la calificación.
+  4. La calificación promedio se calcula desde la tabla resenas con AVG().
+
+================================================================================
+                         MÓDULO DE ADMINISTRACIÓN
+================================================================================
+
+--------------------------------------------------------------------------------
+HU-11: Panel de Control Administrativo (Dashboard)
 Prioridad: Media
 Rol: Administrador
-Historia: "Como administrador, quiero un panel principal que me muestre métricas globales del sistema, para tener un resumen rápido del estado de la biblioteca digital."
+Historia: "Como administrador, quiero un panel principal que me muestre métricas
+globales del sistema, para tener un resumen rápido del estado de la biblioteca
+digital."
 Criterios de Verificación:
-- El dashboard (admin/index.php) renderiza contadores numéricos mostrando en tiempo real el total de: Libros, Usuarios, Autores y Categorías.
-- La interfaz incluye botones de "Acceso Rápido" que redirigen a los módulos de gestión (Libros, Autores, Categorías, Editoriales).
-- La página está asegurada y solo es accesible si la variable de sesión confirma el rol de 'admin'.
+  1. El dashboard (admin/index.php) renderiza contadores numéricos mostrando
+     en tiempo real el total de: Libros, Usuarios, Autores y Categorías.
+  2. Muestra estadísticas detalladas de libros (disponibles/no disponibles)
+     y usuarios (activos/inactivos) con badges de color.
+  3. La interfaz incluye botones de "Acceso Rápido" que redirigen a los
+     módulos de gestión (Nuevo Libro, Libros, Autores, Categorías,
+     Editoriales, Ver Catálogo).
+  4. La página está asegurada y solo es accesible si la variable de sesión
+     confirma el rol de 'admin' (Helpers::requireAdmin()).
+  5. Si un usuario no admin intenta acceder, es redirigido a 403.php.
 
 --------------------------------------------------------------------------------
-HU-05: Gestión de Autores (CRUD)
+HU-12: Gestión de Autores (CRUD)
 Prioridad: Alta
 Rol: Administrador
-Historia: "Como administrador, quiero poder listar, crear, editar y eliminar Autores, para mantener la base de datos de los creadores literarios actualizada de forma atómica."
+Historia: "Como administrador, quiero poder listar, crear, editar y eliminar
+Autores, para mantener la base de datos de los creadores literarios actualizada
+de forma atómica."
 Criterios de Verificación:
-- Existe una vista en tabla mostrando todos los autores con nombre, nacionalidad y estado (Activo/Inactivo).
-- El sistema cuenta con un formulario que captura y valida la Nacionalidad, Nombre y Fecha de Nacimiento.
-- Intentar eliminar un autor (vía la API catalog.php) que ya tenga un libro asignado en la base de datos disparará una excepción capturada, mostrando un error de protección referencial.
+  1. Existe una vista en tabla (admin/autores.php) mostrando todos los autores
+     con nombre, nacionalidad y estado (Activo/Inactivo).
+  2. El formulario (admin/autor_form.php) captura y valida Nombre (obligatorio,
+     maxlength 100), Nacionalidad (opcional, maxlength 100) y Fecha de
+     Nacimiento (opcional, tipo date).
+  3. Intentar eliminar un autor (vía la API catalog.php) que ya tenga un
+     libro asignado en la BD disparará una excepción capturada, mostrando
+     un error de protección referencial: "No se puede eliminar el autor
+     porque tiene libros asociados."
+  4. Las operaciones CRUD se realizan vía AJAX al endpoint api/catalog.php
+     con entity='author'.
+  5. Todas las acciones (crear, actualizar, eliminar) quedan registradas en
+     los logs de auditoría.
 
 --------------------------------------------------------------------------------
-HU-06: Gestión de Categorías (CRUD)
+HU-13: Gestión de Categorías (CRUD)
 Prioridad: Media
 Rol: Administrador
-Historia: "Como administrador, quiero poder definir y editar Categorías Literarias o Géneros, para poder clasificar correctamente los libros del catálogo de forma relacional."
+Historia: "Como administrador, quiero poder definir y editar Categorías
+Literarias o Géneros, para poder clasificar correctamente los libros del
+catálogo de forma relacional."
 Criterios de Verificación:
-- Existe una lista de categorías en el panel.
-- El formulario asíncrono permite crear/editar su Nombre (Campo obligatorio con maxlength) y Descripción opcional.
-- Las categorías poseen estados para ser dadas de baja temporalmente sin borrarlas.
+  1. Existe una lista de categorías en el panel (admin/categorias.php).
+  2. El formulario asíncrono (admin/categoria_form.php) permite crear/editar
+     su Nombre (campo obligatorio con maxlength 100) y Descripción opcional.
+  3. Las categorías poseen estados (activa/inactiva) para ser dadas de baja
+     temporalmente sin borrarlas.
+  4. Intentar eliminar una categoría con libros asociados mostrará un error
+     de protección referencial.
+  5. Las operaciones CRUD se realizan vía AJAX al endpoint api/catalog.php
+     con entity='category'.
+  6. Todas las acciones quedan registradas en los logs de auditoría.
 
 --------------------------------------------------------------------------------
-HU-07: Gestión de Editoriales (CRUD)
+HU-14: Gestión de Editoriales (CRUD)
 Prioridad: Alta
 Rol: Administrador
-Historia: "Como administrador, quiero gestionar un directorio de Casas Editoriales, para registrar atributos extra de quién publica las obras (contacto y la URL de su red)."
+Historia: "Como administrador, quiero gestionar un directorio de Casas
+Editoriales, para registrar atributos extra de quién publica las obras
+(contacto y la URL de su red)."
 Criterios de Verificación:
-- El formulario captura el Nombre, País, Teléfono, Correo Electrónico y el Sitio Web oficial de la casa editorial.
-- El backend evalúa la cadena ingresada en "Sitio Web" pasando por filter_var($url, FILTER_VALIDATE_URL) y rechaza la carga si no es válido.
-- Visualmente el sistema muestra iconos indicativos de comunicación en la tabla de resultados.
+  1. El formulario (admin/editorial_form.php) captura: Nombre (obligatorio),
+     País, Teléfono, Correo Electrónico y Sitio Web oficial.
+  2. El backend evalúa la cadena ingresada en "Sitio Web" pasando por
+     filter_var($url, FILTER_VALIDATE_URL) y rechaza la carga si no es
+     válido (Validator::url()).
+  3. El email de contacto se valida con FILTER_VALIDATE_EMAIL
+     (Validator::email()).
+  4. Visualmente el sistema muestra iconos indicativos de comunicación en la
+     tabla de resultados (admin/editoriales.php).
+  5. Las operaciones CRUD se realizan vía AJAX al endpoint api/catalog.php
+     con entity='editorial'.
+  6. Intentar eliminar una editorial con libros asociados mostrará un error
+     de protección referencial.
+  7. Todas las acciones quedan registradas en los logs de auditoría.
 
 --------------------------------------------------------------------------------
-HU-08: Gestión Central de Libros
+HU-15: Gestión Central de Libros (CRUD)
 Prioridad: Alta
 Rol: Administrador
-Historia: "Como administrador, quiero poder registrar nuevos libros completos detallando toda su taxonomía (título, ISBN, autor, categoría) para expandir el inventario."
+Historia: "Como administrador, quiero poder registrar nuevos libros completos
+detallando toda su taxonomía (título, ISBN, autor, categoría, editorial) y
+gestionar los existentes, para expandir y mantener el inventario."
 Criterios de Verificación:
-- El módulo 'libro_form.php' captura de manera segura metadatos complejos.
-- El servidor impide que la propiedad "Año de publicación" corresponda a un número mayor que el año actual del sistema operativo.
-- Se valida semánticamente mediante una expresión regular (RegEx) que la caja de texto referente a 'ISBN' solo admita un formato de 10 o 13 dígitos, protegiendo la indexación futura.
+  1. El módulo 'libro_form.php' captura de manera segura metadatos complejos:
+     título, ISBN, descripción, año de publicación, editorial (select),
+     cantidad disponible, estado, portada y archivo PDF.
+  2. El servidor impide que la propiedad "Año de publicación" corresponda a
+     un número mayor que el año actual del sistema operativo.
+  3. Se valida semánticamente mediante una expresión regular (RegEx) que la
+     caja de texto referente a 'ISBN' solo admita un formato de 10 o 13
+     dígitos, protegiendo la indexación futura.
+  4. Se pueden asignar múltiples autores y categorías a un libro a través de
+     las tablas intermedias libro_autor y libro_categoria (relación
+     muchos a muchos).
+  5. El listado de libros (admin/libros.php) muestra todos los libros con
+     opciones de editar y eliminar.
+  6. Eliminar un libro primero limpia las relaciones en libro_autor y
+     libro_categoria antes de borrar el registro principal.
+  7. Todas las acciones de creación, actualización y eliminación quedan
+     registradas en los logs de auditoría.
 
 --------------------------------------------------------------------------------
-HU-09: Doble Capa de Validación Estratégica
+HU-16: Carga de Portadas de Libros (Upload Local)
+Prioridad: Media
+Rol: Administrador
+Historia: "Como administrador, quiero poder subir una imagen de portada de un
+libro desde mi equipo local, para tener portadas personalizadas sin depender
+de URLs externas."
+Criterios de Verificación:
+  1. El formulario de libro (libro_form.php) incluye un área de subida de
+     archivos con input type='file' (id='portada_file').
+  2. Se muestra una vista previa (preview) de la imagen seleccionada antes
+     de enviar el formulario (app.js: FileReader API).
+  3. Se valida en el frontend que el archivo sea una imagen (JPEG, PNG, GIF,
+     WEBP) y no exceda 5MB.
+  4. El archivo se almacena en el directorio public/uploads/.
+  5. El campo portada_url se actualiza con la ruta relativa al archivo subido.
+
+================================================================================
+                         MÓDULO TRANSVERSAL / SISTEMA
+================================================================================
+
+--------------------------------------------------------------------------------
+HU-17: Doble Capa de Validación Estratégica
 Prioridad: Crítica
 Rol: Usuario / Sistema
-Historia: "Como plataforma de software, necesito obligar a que todos los datos transaccionados superen una validación estricta en tiempo real en la vista, y otra de respaldo en el servidor, para blindar la sanidad de la base de datos."
+Historia: "Como plataforma de software, necesito obligar a que todos los datos
+transaccionados superen una validación estricta en tiempo real en la vista, y
+otra de respaldo en el servidor, para blindar la sanidad de la base de datos."
 Criterios de Verificación:
-- El archivo JavaScript (`app.js`) utiliza la API nativa de los navegadores invocando `form.checkValidity()` antes de ejecutar fetch(), deteniendo las tareas cuando falten constraints como `minlength`, `maxlength` o `require`.
-- La clase PHP `Validator.php` implementa métodos para verificar numéricos, longitudes de cadenas, comparativas y formatos regex, devolviendo siempre un JSON 400 amistoso (`success: false`) para ser interpretado por los "Toasts" en la IU sin romper la experiencia.
+  1. El archivo JavaScript (app.js) utiliza la API nativa de los navegadores
+     invocando form.checkValidity() antes de ejecutar fetch(), deteniendo las
+     tareas cuando falten constraints como minlength, maxlength o require.
+  2. La clase PHP Validator.php implementa métodos encadenables para verificar:
+     - Campos obligatorios (required)
+     - Formato de email (email)
+     - Longitudes mínimas y máximas (minLength, maxLength)
+     - Valores numéricos mínimos y máximos (min, max)
+     - Validación de URLs (url)
+     - Patrones RegEx (pattern)
+     - Coincidencia de campos (matches)
+     - Tipo numérico (numeric)
+  3. Cada validación fallida retorna siempre un JSON con HTTP 200 pero
+     success: false y el primer mensaje de error, interpretado por los
+     "Toasts" en la IU sin romper la experiencia.
+
+--------------------------------------------------------------------------------
+HU-18: Sistema de Auditoría y Logging
+Prioridad: Alta
+Rol: Sistema / Administrador
+Historia: "Como administrador, quiero que todas las acciones críticas del sistema
+queden registradas en un log de auditoría, para tener trazabilidad completa de
+las operaciones realizadas por cada usuario."
+Criterios de Verificación:
+  1. Existe una tabla 'logs' en la BD que almacena: id_log, id_usuario, accion,
+     tabla_afectada, id_registro_afectado, fecha e IP del cliente.
+  2. El LoggerService registra automáticamente las acciones de: registro de
+     usuario, inicio y cierre de sesión, CRUD de libros, CRUD de autores,
+     CRUD de categorías, CRUD de editoriales y creación de reseñas.
+  3. Los errores de logging NO interrumpen el flujo normal de la aplicación
+     (capturados con try-catch silencioso).
+  4. El LoggerService proporciona un método getLogs() con filtros opcionales
+     por usuario, rango de fechas y límite de resultados.
+  5. Cada registro incluye la IP del cliente ($_SERVER['REMOTE_ADDR']).
+
+--------------------------------------------------------------------------------
+HU-19: Control de Acceso y Protección de Rutas
+Prioridad: Crítica
+Rol: Sistema
+Historia: "Como sistema, necesito garantizar que las rutas administrativas solo
+sean accesibles por usuarios con rol de administrador, y que las funcionalidades
+protegidas requieran autenticación, para mantener la seguridad de la plataforma."
+Criterios de Verificación:
+  1. Helpers::requireAdmin() verifica primero que el usuario esté autenticado
+     y luego que su rol sea administrador (id_rol = 1).
+  2. Todas las páginas en admin/ llaman a Helpers::requireAdmin() al inicio.
+  3. Los endpoints API protegidos (catalog.php, books.php) verifican
+     autenticación y rol antes de procesar cualquier solicitud.
+  4. Los usuarios no autorizados son redirigidos a 403.php con un mensaje
+     flash de error.
+  5. El endpoint de reseñas (api/reviews.php) requiere autenticación pero
+     no rol de administrador.
+
+--------------------------------------------------------------------------------
+HU-20: Notificaciones Toast en la Interfaz
+Prioridad: Media
+Rol: Usuario / Sistema
+Historia: "Como usuario, quiero recibir notificaciones visuales de retroalimenta-
+ción (éxito, error, advertencia) al realizar acciones en la plataforma, para
+saber inmediatamente el resultado de mis operaciones."
+Criterios de Verificación:
+  1. El sistema Toast (app.js) soporta tipos: success, error, warning e info,
+     cada uno con su ícono SVG y color distintivo.
+  2. Los toasts aparecen con animación de entrada y se auto-ocultan después de
+     4 segundos (configurable).
+  3. Los mensajes flash de PHP (Helpers::setFlash/getFlash) se muestran
+     automáticamente como toasts al cargar la página siguiente (via
+     elemento #flash-data con data attributes).
+  4. Las respuestas AJAX de las APIs también muestran el resultado via Toast.
+  5. Los toasts pueden ser descartados manualmente por el usuario haciendo clic
+     en el botón de cierre.
+
+--------------------------------------------------------------------------------
+HU-21: Interfaz Responsiva y Navegación Móvil
+Prioridad: Media
+Rol: Visitante / Usuario
+Historia: "Como usuario, quiero poder usar la plataforma de forma cómoda desde
+cualquier dispositivo (escritorio, tablet, móvil), gracias a un diseño
+responsivo y una navegación adaptativa."
+Criterios de Verificación:
+  1. El archivo styles.css define estilos responsivos para todas las vistas.
+  2. La función initMobileNav() (app.js) inicializa un menú de navegación
+     adaptado para dispositivos móviles.
+  3. El catálogo utiliza un grid responsivo (book-grid) que se adapta al
+     ancho de la pantalla.
+  4. Los formularios y tablas del panel admin se ajustan a pantallas pequeñas.
+  5. Las animaciones de entrada (animate-fadeIn, animate-fadeInUp) mejoran
+     la experiencia visual en la carga de contenido.
+
+================================================================================
+                    RESUMEN DE PRIORIDADES
+================================================================================
+
+CRÍTICA:
+  - HU-17: Doble Capa de Validación Estratégica
+  - HU-19: Control de Acceso y Protección de Rutas
+
+ALTA:
+  - HU-01: Registro Simplificado de Usuarios
+  - HU-02: Inicio de Sesión de Usuarios
+  - HU-04: Acceso de Invitados al Catálogo
+  - HU-05: Búsqueda y Filtrado de Libros
+  - HU-07: Detalle de Libro
+  - HU-08: Restricción de Descarga de Libros
+  - HU-09: Sistema de Reseñas y Calificaciones
+  - HU-12: Gestión de Autores (CRUD)
+  - HU-14: Gestión de Editoriales (CRUD)
+  - HU-15: Gestión Central de Libros (CRUD)
+  - HU-18: Sistema de Auditoría y Logging
+
+MEDIA:
+  - HU-03: Cierre de Sesión
+  - HU-06: Paginación del Catálogo
+  - HU-10: Visualización de Calificación Promedio
+  - HU-11: Panel de Control Administrativo (Dashboard)
+  - HU-13: Gestión de Categorías (CRUD)
+  - HU-16: Carga de Portadas de Libros (Upload Local)
+  - HU-20: Notificaciones Toast en la Interfaz
+  - HU-21: Interfaz Responsiva y Navegación Móvil
+
+TOTAL: 21 Historias de Usuario
+================================================================================
