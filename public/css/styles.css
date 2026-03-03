@@ -1618,6 +1618,8 @@ select.form-control {
 .cover-upload-area svg {
     width: 40px;
     height: 40px;
+    max-width: 40px;
+    max-height: 40px;
     color: var(--text-muted);
     margin-bottom: 0.5rem;
 }

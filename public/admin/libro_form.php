@@ -162,7 +162,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="form-group">
                     <label class="form-label">Portada del libro</label>
                     <div class="cover-upload-area" id="coverUploadArea">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; margin: 0 auto 0.5rem auto; display: block;">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                             <circle cx="8.5" cy="8.5" r="1.5" />
                             <polyline points="21 15 16 10 5 21" />
@@ -183,7 +183,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="form-group">
                     <label class="form-label">Archivo PDF del libro</label>
                     <div class="cover-upload-area" id="pdfUploadArea" style="border-style: dashed; border-color: var(--primary);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; margin: 0 auto 0.5rem auto; display: block;">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                             <polyline points="14 2 14 8 20 8" />
                             <line x1="12" y1="18" x2="12" y2="12" />

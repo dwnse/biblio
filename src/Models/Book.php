@@ -37,8 +37,8 @@ class Book
         $this->estado = $data['estado'] ?? 'disponible';
         $this->fechaRegistro = $data['fecha_registro'] ?? null;
         $this->editorialNombre = $data['editorial_nombre'] ?? null;
-        $this->autores = [];
-        $this->categorias = [];
+        $this->autores = $data['autores'] ?? [];
+        $this->categorias = $data['categorias'] ?? [];
         $this->calificacionPromedio = isset($data['calificacion_promedio']) ? (float) $data['calificacion_promedio'] : null;
     }
 
