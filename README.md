@@ -1,5 +1,12 @@
 # Sistema de Biblioteca Digital — BiblioDigital
 
+- Nombre del proyecto: "Sistema de Biblioteca Digital"
+- Descripción breve: "BiblioDigital es un sistema web de gestión de biblioteca digital desarrollado con PHP 8.2, MySQL y arquitectura MVC. Permite administrar libros, autores, categorías y editoriales con un panel de administración completo y un catálogo público para usuarios."
+
+- Problema que resuelve: "La gestión manual de bibliotecas digitales es ineficiente: no permite búsquedas rápidas, el control de inventario es propenso a errores, y no existe trazabilidad de acciones. BiblioDigital centraliza la administración del acervo bibliográfico con control de acceso por roles, registro de actividades (logs), y una interfaz moderna para la consulta del catálogo."
+
+- Usuarios objetivo: "- Administradores de biblioteca: Gestión completa de libros, autores, categorías y editoriales\n- Usuarios / Lectores: Consulta del catálogo, búsqueda de libros, descarga de materiales\n- Instituciones educativas: Control de acervo bibliográfico digital"
+
 ## Descripción Breve
 BiblioDigital es un sistema web de gestión de biblioteca digital desarrollado con PHP 8.2, MySQL y arquitectura MVC. Permite administrar libros, autores, categorías y editoriales con un panel de administración completo y un catálogo público para usuarios.
 
