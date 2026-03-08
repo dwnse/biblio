@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../helpers/token.php';
 
 // Suppress HTML error output for JSON API
 ini_set('display_errors', '0');
@@ -19,6 +20,14 @@ use App\Utils\Validator;
 use App\Utils\Helpers;
 
 $method = $_SERVER['REQUEST_METHOD'];
+
+// Permitir JSON raw en el body
+if ($_SERVER['CONTENT_TYPE'] ?? '' === 'application/json' || strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
+    $rawInput = file_get_contents('php://input');
+    $jsonData = json_decode($rawInput, true) ?? [];
+    $_POST = array_merge($_POST, $jsonData);
+}
+
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 try {
@@ -78,14 +87,60 @@ try {
                 Helpers::jsonResponse(['success' => false, 'message' => $validator->getFirstError()]);
             }
 
+
             $user = $userService->login(
                 Helpers::sanitize($_POST['email']),
                 $_POST['contrasena']
             );
 
+            // Generar token simple
+            $token = generate_simple_token($user['id_usuario'], $user['email']);
+
             $redirect = ((int) $user['id_rol'] === 1) ? BASE_URL . '/admin/index.php' : BASE_URL . '/catalogo.php';
             Helpers::setFlash('success', '¡Bienvenido, ' . $user['nombre'] . '!');
-            Helpers::jsonResponse(['success' => true, 'message' => 'Inicio de sesión exitoso', 'redirect' => $redirect]);
+            Helpers::jsonResponse([
+                'success' => true,
+                'message' => 'Inicio de sesión exitoso',
+                'redirect' => $redirect,
+                'token' => $token
+            ]);
+
+        case 'user':
+            // Obtener token del header Authorization
+            $headers = getallheaders();
+            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+            $token = '';
+            if (stripos($authHeader, 'Bearer ') === 0) {
+                $token = trim(substr($authHeader, 7));
+            }
+            if (!$token) {
+                Helpers::jsonResponse(['success' => false, 'message' => 'Token no proporcionado'], 401);
+            }
+            // Decodificar token simple
+            $decoded = base64_decode($token);
+            $parts = explode(':', $decoded);
+            if (count($parts) < 2) {
+                Helpers::jsonResponse(['success' => false, 'message' => 'Token inválido'], 401);
+            }
+            $userId = $parts[0];
+            $email = $parts[1];
+            // Buscar usuario por ID y email
+            $userRepo = new \App\Repositories\UserRepository();
+            $user = $userRepo->findByEmail($email);
+            if (!$user || $user['id_usuario'] != $userId) {
+                Helpers::jsonResponse(['success' => false, 'message' => 'Usuario no encontrado'], 401);
+            }
+            // Devolver datos básicos del usuario autenticado
+            Helpers::jsonResponse([
+                'success' => true,
+                'user' => [
+                    'id_usuario' => $user['id_usuario'],
+                    'nombre' => $user['nombre'],
+                    'email' => $user['email'],
+                    'rol' => $user['rol_nombre'],
+                    'estado' => $user['estado']
+                ]
+            ]);
 
         default:
             Helpers::jsonResponse(['success' => false, 'message' => 'Acción no válida']);

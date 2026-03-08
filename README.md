@@ -1,53 +1,384 @@
-# Sistema de Biblioteca Digital — BiblioDigital
+# BiblioDigital - Sistema de Biblioteca Digital
 
-- Nombre del proyecto: "Sistema de Biblioteca Digital"
-- Descripción breve: "BiblioDigital es un sistema web de gestión de biblioteca digital desarrollado con PHP 8.2, MySQL y arquitectura MVC. Permite administrar libros, autores, categorías y editoriales con un panel de administración completo y un catálogo público para usuarios."
+## 1. Descripción general del sistema
 
-- Problema que resuelve: "La gestión manual de bibliotecas digitales es ineficiente: no permite búsquedas rápidas, el control de inventario es propenso a errores, y no existe trazabilidad de acciones. BiblioDigital centraliza la administración del acervo bibliográfico con control de acceso por roles, registro de actividades (logs), y una interfaz moderna para la consulta del catálogo."
+### Nombre del sistema
+BiblioDigital
 
-- Usuarios objetivo: "- Administradores de biblioteca: Gestión completa de libros, autores, categorías y editoriales\n- Usuarios / Lectores: Consulta del catálogo, búsqueda de libros, descarga de materiales\n- Instituciones educativas: Control de acervo bibliográfico digital"
+### Problema que busca resolver
+El sistema resuelve la gestión ineficiente de bibliotecas digitales mediante la centralización de la administración de acervos bibliográficos, permitiendo búsquedas rápidas, control de inventario preciso, trazabilidad de acciones y una interfaz moderna para la consulta del catálogo.
 
-## Descripción Breve
-BiblioDigital es un sistema web de gestión de biblioteca digital desarrollado con PHP 8.2, MySQL y arquitectura MVC. Permite administrar libros, autores, categorías y editoriales con un panel de administración completo y un catálogo público para usuarios.
+### Usuarios del sistema
+- **Administradores**: Gestión completa de libros, autores, categorías, editoriales y usuarios
+- **Usuarios registrados**: Consulta del catálogo, búsqueda, reseñas y descargas
+- **Instituciones educativas**: Control y acceso a materiales digitales
 
-## Problema que Resuelve
-La gestión manual de bibliotecas digitales es ineficiente: no permite búsquedas rápidas, el control de inventario es propenso a errores, y no existe trazabilidad de acciones. BiblioDigital centraliza la administración del acervo bibliográfico con control de acceso por roles, registro de actividades (logs), y una interfaz moderna para la consulta del catálogo.
+### Funcionalidades principales implementadas
+- Gestión completa de libros con autores, categorías y editoriales
+- Sistema de autenticación con roles (Admin/Usuario)
+- Catálogo público con búsqueda y filtrado
+- Sistema de reseñas y calificaciones
+- Panel de administración
+- Logs de auditoría
+- API REST para integración
 
-## Usuarios Objetivo
-- **Administradores de biblioteca**: Gestión completa de libros, autores, categorías y editoriales
-- **Usuarios / Lectores**: Consulta del catálogo, búsqueda de libros, descarga de materiales
-- **Instituciones educativas**: Control de acervo bibliográfico digital
+### Arquitectura utilizada
+Cliente-Servidor con API REST. Backend en Laravel (PHP), Frontend en Vue.js, Base de datos MySQL.
+
+## 2. Arquitectura del sistema
+
+### Comunicación frontend-backend
+El frontend (Vue.js) se comunica con el backend (Laravel) mediante peticiones HTTP a la API REST. Los datos se intercambian en formato JSON.
+
+### Uso de HTTP y JSON
+- **GET**: Para obtener datos (listar libros, obtener usuario)
+- **POST**: Para crear recursos (registro, login, crear libro)
+- **PUT/PATCH**: Para actualizar recursos
+- **DELETE**: Para eliminar recursos
+- Todas las respuestas de la API están en formato JSON
+
+### Flujo de datos
+1. Usuario interactúa con Vue.js
+2. Vue.js hace petición AJAX con Axios a endpoints Laravel
+3. Laravel procesa la petición, consulta MySQL
+4. Respuesta JSON retorna a Vue.js
+5. Vue.js actualiza la interfaz
+
+## 3. Estructura del proyecto
+
+### Backend (Laravel)
+```
+app/
+├── Http/Controllers/Api/     # Controladores API
+├── Models/                   # Modelos Eloquent
+├── Services/                 # Lógica de negocio
+├── Repositories/             # Acceso a datos
+config/                       # Configuraciones
+database/
+├── migrations/               # Migraciones BD
+├── seeders/                  # Datos iniciales
+routes/
+├── api.php                   # Rutas API
+```
+
+#### Modelos
+Los modelos Eloquent representan las entidades de la BD con relaciones:
+- `Usuario`: Autenticación, roles
+- `Libro`: Libros con relaciones many-to-many
+- `Autor`, `Categoria`, `Editorial`: Entidades relacionadas
+
+#### Controladores
+Controladores API manejan las peticiones HTTP:
+- `AuthController`: Login, registro, logout
+- `BookController`: CRUD de libros
+- `CatalogController`: Búsqueda y filtrado
+
+#### Rutas
+- `/api/register` (POST)
+- `/api/login` (POST)
+- `/api/books` (GET, POST)
+- `/api/books/{id}` (GET, PUT, DELETE)
+
+#### Middleware
+- `auth:sanctum`: Protección de rutas con tokens
+- Validación de roles para acceso admin
+
+#### Acceso a base de datos
+- Eloquent ORM para consultas
+- Migraciones para esquema de BD
+- Seeders para datos iniciales
+
+### Frontend (Vue.js)
+```
+frontend/
+├── src/
+│   ├── views/          # Páginas principales
+│   ├── components/     # Componentes reutilizables
+│   ├── router/         # Configuración de rutas
+│   ├── stores/         # Estado con Pinia
+│   └── services/       # Llamadas a API
+```
+
+#### Componentes Vue
+- `LoginView`: Formulario de login
+- `RegisterView`: Formulario de registro
+- `CatalogView`: Listado y búsqueda de libros
+- `BookDetail`: Vista detallada de libro
+
+#### Consumo de API
+Uso de Axios para llamadas HTTP con interceptores para tokens de autenticación.
+
+#### Organización del frontend
+- **Views**: Páginas principales
+- **Components**: Elementos reutilizables
+- **Router**: Navegación SPA
+- **Stores**: Estado global (autenticación, libros)
+
+## 4. Diseño de base de datos
+
+### Modelo relacional
+```
+usuarios (1) ---- (N) descargas (N) ---- (1) libros
+  │                      │
+  └── (1) roles          └── (N) resenas
+                          │
+                          ├── (N) libro_autor (N) ─── (1) autores
+                          ├── (N) libro_categoria (N) ─── (1) categorias
+                          └── (1) editorial
+```
+
+### Tablas principales
+- **usuarios**: Información de usuarios y roles
+- **libros**: Metadatos de libros
+- **autores**: Información de autores
+- **categorias**: Clasificación de libros
+- **editorial**: Información de editoriales
+- **roles**: Definición de roles
+
+### Claves primarias y foráneas
+- PK: id_usuario, id_libro, id_autor, etc.
+- FK: id_rol → roles, id_editorial → editorial
+
+### Relaciones
+- Usuarios ↔ Roles (1:N)
+- Libros ↔ Autores (N:M via libro_autor)
+- Libros ↔ Categorías (N:M via libro_categoria)
+- Libros ↔ Editorial (N:1)
+
+### Consulta SQL de ejemplo
+```sql
+SELECT l.titulo, GROUP_CONCAT(a.nombres) as autores,
+       AVG(r.calificacion) as rating
+FROM libros l
+LEFT JOIN libro_autor la ON l.id_libro = la.id_libro
+LEFT JOIN autores a ON la.id_autor = a.id_autor
+LEFT JOIN resenas r ON l.id_libro = r.id_libro AND r.estado = 'visible'
+WHERE l.estado = 'disponible'
+GROUP BY l.id_libro
+ORDER BY rating DESC;
+```
+
+## 5. Implementación de la API REST
+
+### Endpoints disponibles
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/register` | Registrar nuevo usuario |
+| POST | `/api/login` | Autenticar usuario |
+| GET | `/api/user` | Obtener datos del usuario autenticado |
+| POST | `/api/logout` | Cerrar sesión |
+| GET | `/api/books` | Listar libros con filtros |
+| POST | `/api/books` | Crear nuevo libro |
+| GET | `/api/books/{id}` | Obtener libro específico |
+| PUT | `/api/books/{id}` | Actualizar libro |
+| DELETE | `/api/books/{id}` | Eliminar libro |
+
+### Estructura de respuestas JSON
+```json
+{
+  "data": [...],
+  "message": "Operación exitosa",
+  "errors": null
+}
+```
+
+### Lógica en controladores
+Los controladores validan entrada, interactúan con servicios/repositorios, manejan errores y retornan respuestas JSON estandarizadas.
+
+## 6. Seguridad y autenticación
+
+### Sistema de autenticación
+- **Registro**: Validación de email único, hash de contraseña
+- **Login**: Verificación de credenciales, generación de token
+- **Bearer Token**: Laravel Sanctum para autenticación stateless
+
+### Protección de rutas
+```php
+Route::middleware('auth:sanctum')->group(function () {
+    // Rutas protegidas
+});
+```
+
+### Almacenamiento de contraseñas
+Uso de `Hash::make()` con bcrypt para hashear contraseñas.
+
+### Medidas de seguridad
+- **SQL Injection**: Prepared statements via Eloquent
+- **CSRF**: Tokens en formularios
+- **Sesiones seguras**: HttpOnly, SameSite
+- **Validación**: Reglas estrictas en controladores
+
+## 7. Implementación del Frontend con Vue
+
+### Componentes desarrollados
+- **LoginView**: Formulario con validación
+- **RegisterView**: Registro de usuarios
+- **CatalogView**: Grid de libros con búsqueda
+- **BookDetail**: Vista detallada con reseñas
+
+### Vistas principales
+- Home: Bienvenida
+- Login/Register: Autenticación
+- Catalog: Navegación del catálogo
+
+### Interacción con el usuario
+- Formularios reactivos
+- Estados de carga
+- Mensajes de error/success
+- Navegación SPA
+
+### Consumo de la API
+```javascript
+const response = await axios.get('/api/books', {
+  headers: { Authorization: `Bearer ${token}` }
+});
+```
+
+## 8. Consumo de API mediante AJAX
+
+### Tecnologías utilizadas
+- **Axios**: Cliente HTTP para Vue.js
+- **Interceptors**: Para agregar tokens automáticamente
+
+### Peticiones GET
+```javascript
+axios.get('/api/books', { params: { q: 'search' } })
+  .then(response => this.books = response.data);
+```
+
+### Peticiones POST
+```javascript
+axios.post('/api/login', credentials)
+  .then(response => {
+    localStorage.setItem('token', response.data.token);
+  });
+```
+
+### Autenticación con token
+```javascript
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+```
+
+## 9. Pruebas con Postman
+
+### Colección de pruebas
+- **Auth**: Login, Register, Logout
+- **Books**: CRUD operations
+- **Catalog**: Search, Filter
+
+### Autenticación con token
+Headers: `Authorization: Bearer {token}`
+
+### Endpoints probados
+- POST /api/login
+- GET /api/books
+- POST /api/books
+- PUT /api/books/{id}
+- DELETE /api/books/{id}
+
+## 10. Patrones de diseño
+
+### Repository Pattern
+**Problema resuelto**: Separa lógica de acceso a datos de la lógica de negocio.
+
+**Implementación**:
+```php
+interface BookRepositoryInterface {
+    public function findById($id);
+    public function search($query);
+}
+
+class BookRepository implements BookRepositoryInterface {
+    public function findById($id) {
+        return Libro::with('autores')->find($id);
+    }
+}
+```
+
+**Beneficio**: Código más mantenible, fácil testing.
+
+### Service Layer
+**Problema resuelto**: Centraliza lógica de negocio compleja.
+
+**Implementación**:
+```php
+class BookService {
+    public function createBook(array $data) {
+        // Validación y lógica de negocio
+        $book = $this->bookRepository->create($data);
+        $this->logger->log('Book created');
+        return $book;
+    }
+}
+```
+
+## 11. Evidencias de funcionamiento
+
+### API funcionando
+- Endpoints responden correctamente con datos JSON
+- Autenticación funciona con tokens
+- CRUD operations validadas
+
+### Pruebas con Postman
+- Colección completa de requests
+- Tests automatizados para responses
+- Documentación generada
+
+### Frontend
+- Interfaz responsive
+- Navegación funcional
+- Integración completa con API
+
+## 12. Consumo de API externa (opcional)
+
+### API consumida: JSONPlaceholder
+**Endpoint**: `https://jsonplaceholder.typicode.com/posts`
+
+**Datos obtenidos**: Posts de ejemplo para demostración
+
+**Integración**: Mostrados en vista de recomendaciones como contenido adicional
 
 ---
 
-## Requisitos Previos
+## Instalación y Configuración
 
-Antes de empezar, asegúrate de tener instalado:
+### Requisitos
+- PHP 8.2+
+- Composer
+- MySQL
+- Node.js (para frontend)
 
-| Software | Versión mínima | Descarga |
-|----------|---------------|----------|
-| **XAMPP** | 8.x (incluye PHP 8.2 + MySQL + Apache) | [apachefriends.org](https://www.apachefriends.org/) |
-| **Composer** | 2.x | [getcomposer.org](https://getcomposer.org/) |
-| **Git** | 2.x | [git-scm.com](https://git-scm.com/) |
+### Pasos
+1. `composer install`
+2. `cp .env.example .env`
+3. `php artisan key:generate`
+4. `php artisan migrate`
+5. `php artisan db:seed`
+6. `cd frontend && npm install && npm run dev`
 
-> **Nota:** XAMPP ya incluye PHP, MySQL y Apache. No necesitas instalarlos por separado.
+### Ejecutar
+- Backend: `php artisan serve`
+- Frontend: `npm run dev` en frontend/
+- BD: Importar bd.txt o ejecutar migraciones
 
----
+### Datos de Prueba Incluidos
 
-## Instalación Paso a Paso
+La base de datos incluye datos de prueba para todas las tablas:
 
-### 1. Clonar el repositorio
+#### Usuarios de Prueba
+- **Admin**: admin@bibliodigital.com / admin123 (Rol: Administrador)
+- **Usuario**: juan@example.com / user123 (Rol: Usuario)
 
-Abre una terminal y navega a la carpeta `htdocs` de XAMPP:
-
-```bash
-# Windows (ruta por defecto de XAMPP)
-cd C:\xampp\htdocs
-
-# macOS
-cd /Applications/XAMPP/htdocs
-
-# Linux
+#### Contenido de Prueba
+- **4 Libros**: Cien años de soledad, Harry Potter, It, La casa de los espíritus
+- **4 Autores**: García Márquez, Allende, King, Rowling
+- **4 Categorías**: Ficción, No Ficción, Ciencia, Historia
+- **3 Editoriales**: Planeta, Penguin, Santillana
+- **2 Reseñas**: Calificaciones y comentarios de ejemplo
+- **1 Descarga**: Registro de descarga de ejemplo
+- **1 Log**: Registro de actividad
+- **1 Recomendación**: Sugerencia de libro
 cd /opt/lampp/htdocs
 ```
 
