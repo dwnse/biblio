@@ -91,10 +91,11 @@ function handleForm(formId, options = {}) {
             if (data.success) {
                 Toast.show(data.message || 'Operación exitosa', 'success');
                 if (data.redirect) {
-                    setTimeout(() => window.location.href = data.redirect, 800);
+                    setTimeout(() => { window.location.href = data.redirect; }, 1200);
                 }
                 if (options.onSuccess) options.onSuccess(data);
             } else {
+                console.log('Server validation failed:', data);
                 Toast.show(data.message || 'Ocurrió un error.', 'error');
                 if (options.onError) options.onError(data);
             }
@@ -256,9 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (data.success) {
                     Toast.show(data.message, 'success');
-                    if (data.redirect) {
-                        setTimeout(() => window.location.href = data.redirect, 800);
-                    }
+                    // Eliminada la redirección automática para mejor UX
                 } else {
                     Toast.show(data.message || 'Error al publicar.', 'error');
                 }

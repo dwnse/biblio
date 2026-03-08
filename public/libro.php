@@ -71,9 +71,66 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <div class="book-detail-info">
+
             <h1>
                 <?= htmlspecialchars($book['titulo']) ?>
+                <?php if (Helpers::isLoggedIn()): ?>
+                    <button id="favBtn" class="btn btn-fav" style="margin-left:1rem;vertical-align:middle;" data-libro="<?= $book['id_libro'] ?>">
+                        <span id="favIcon" style="color:#e74c3c;">
+                            <svg id="favSvg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 21C12 21 4 13.36 4 8.5C4 5.42 6.42 3 9.5 3C11.24 3 12.91 3.81 14 5.08C15.09 3.81 16.76 3 18.5 3C21.58 3 24 5.42 24 8.5C24 13.36 16 21 16 21H12Z"/>
+                            </svg>
+                        </span>
+                        <span id="favText">Favorito</span>
+                    </button>
+                <?php endif; ?>
             </h1>
+<?php if (Helpers::isLoggedIn()): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const favBtn = document.getElementById('favBtn');
+    if (!favBtn) return;
+    const libroId = favBtn.getAttribute('data-libro');
+    const favIcon = document.getElementById('favIcon');
+    const favText = document.getElementById('favText');
+    // Consultar si es favorito
+    fetch('api/favoritos.php?action=is_favorito&id_libro=' + libroId)
+        .then(r => r.json()).then(d => {
+            if (d.success && d.is_favorito) {
+                favBtn.classList.add('active');
+                favText.textContent = 'Quitar de favoritos';
+                favIcon.style.opacity = 1;
+            } else {
+                favBtn.classList.remove('active');
+                favText.textContent = 'Favorito';
+                favIcon.style.opacity = 0.5;
+            }
+        });
+    favBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const isActive = favBtn.classList.contains('active');
+        fetch('api/favoritos.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'action=' + (isActive ? 'remove' : 'add') + '&id_libro=' + libroId
+        })
+        .then(r => r.json()).then(d => {
+            if (d.success) {
+                if (isActive) {
+                    favBtn.classList.remove('active');
+                    favText.textContent = 'Favorito';
+                    favIcon.style.opacity = 0.5;
+                } else {
+                    favBtn.classList.add('active');
+                    favText.textContent = 'Quitar de favoritos';
+                    favIcon.style.opacity = 1;
+                }
+            }
+        });
+    });
+});
+</script>
+<?php endif; ?>
 
             <p style="color: var(--text-secondary); font-size: 1.1rem; margin-top: 0.3rem;">
                 por <strong style="color: var(--accent-light);">

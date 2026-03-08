@@ -19,4 +19,19 @@ class CategoryRepository extends BaseRepository
         $stmt = $this->db->prepare("UPDATE {$this->table} SET estado = :estado WHERE id_categoria = :id");
         return $stmt->execute(['estado' => $estado, 'id' => $id]);
     }
+
+    public function existsByName(string $name, ?int $excludeId = null): bool
+    {
+        $sql = "SELECT COUNT(*) as count FROM {$this->table} WHERE LOWER(nombre) = LOWER(:nombre)";
+        $params = ['nombre' => $name];
+
+        if ($excludeId !== null) {
+            $sql .= " AND id_categoria != :id";
+            $params['id'] = $excludeId;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetch()['count'] > 0;
+    }
 }

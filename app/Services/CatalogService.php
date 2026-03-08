@@ -83,6 +83,10 @@ class CatalogService
 
     public function createCategory(array $data, int $userId): int
     {
+        if ($this->catRepo->existsByName($data['nombre'])) {
+            throw new Exception("Ya existe una categoría con el nombre '{$data['nombre']}'.");
+        }
+
         $id = $this->catRepo->create([
             'nombre' => $data['nombre'],
             'descripcion' => $data['descripcion'] ?? null,
@@ -95,6 +99,10 @@ class CatalogService
 
     public function updateCategory(int $id, array $data, int $userId): void
     {
+        if ($this->catRepo->existsByName($data['nombre'], $id)) {
+            throw new Exception("Ya existe otra categoría con el nombre '{$data['nombre']}'.");
+        }
+
         $this->catRepo->update($id, [
             'nombre' => $data['nombre'],
             'descripcion' => $data['descripcion'] ?? null,
@@ -127,6 +135,10 @@ class CatalogService
 
     public function createEditorial(array $data, int $userId): int
     {
+        if ($this->editRepo->existsByName($data['nombre'])) {
+            throw new Exception("Ya existe una editorial con el nombre '{$data['nombre']}'.");
+        }
+
         $id = $this->editRepo->create([
             'nombre' => $data['nombre'],
             'pais' => $data['pais'] ?? null,
@@ -142,6 +154,10 @@ class CatalogService
 
     public function updateEditorial(int $id, array $data, int $userId): void
     {
+        if ($this->editRepo->existsByName($data['nombre'], $id)) {
+            throw new Exception("Ya existe otra editorial con el nombre '{$data['nombre']}'.");
+        }
+
         $this->editRepo->update($id, [
             'nombre' => $data['nombre'],
             'pais' => $data['pais'] ?? null,

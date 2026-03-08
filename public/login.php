@@ -33,9 +33,11 @@ $flash = Helpers::getFlash();
     <?php endif; ?>
     <div id="toast-container" class="toast-container"></div>
 
-    <div class="auth-wrapper">
+    <div class="auth-wrapper" style="position:relative;">
         <div class="auth-bg-glow glow-1"></div>
         <div class="auth-bg-glow glow-2"></div>
+
+        <a href="<?= BASE_URL ?>/catalogo.php" class="btn btn-secondary" style="position:absolute;top:2rem;left:2rem;z-index:10;">← Volver al catálogo</a>
 
         <div class="auth-card">
             <div class="auth-logo">
@@ -45,6 +47,8 @@ $flash = Helpers::getFlash();
                 <h1 class="text-gradient">BiblioDigital</h1>
                 <p>Descubre y lee sin límites</p>
             </div>
+
+                <a href="forgot_password.php" class="btn btn-link" style="float:left;margin-bottom:1rem;">¿Olvidaste tu contraseña?</a>
 
             <form id="loginForm" action="<?= BASE_URL ?>/api/auth.php" method="POST">
                 <input type="hidden" name="action" value="login">

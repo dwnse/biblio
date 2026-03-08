@@ -36,7 +36,7 @@ const login = async () => {
     const response = await axios.post('/api/login', form.value)
     localStorage.setItem('token', response.data.token)
     axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
-    router.push('/catalog')
+    // Eliminada la redirección automática tras login para mejor UX
   } catch (err) {
     error.value = err.response?.data?.message || 'Error al iniciar sesión'
   } finally {

@@ -55,8 +55,7 @@ try {
             Helpers::jsonResponse([
                 'success' => true,
                 'message' => 'Reseña publicada correctamente.',
-                'id' => $reviewId,
-                'redirect' => BASE_URL . '/libro.php?id=' . $bookId
+                'id' => $reviewId
             ]);
             break;
 

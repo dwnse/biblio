@@ -111,9 +111,17 @@ class Book
 
     public function getAutoresString(): string
     {
-        if (empty($this->autores))
+        $autores = $this->getAutores();
+        if (empty($autores)) {
             return 'Sin autor';
-        return implode(', ', array_map(fn($a) => trim(($a['nombres'] ?? '') . ' ' . ($a['apellidos'] ?? '')), $this->autores));
+        }
+
+        return implode(', ', array_map(function ($autor) {
+            $nombres = $autor['nombres'] ?? $autor['nombre'] ?? '';
+            $apellidos = $autor['apellidos'] ?? '';
+            $full = trim($nombres . ' ' . $apellidos);
+            return $full ?: 'Desconocido';
+        }, $autores));
     }
 
     public function getCategoriasString(): string

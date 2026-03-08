@@ -114,23 +114,16 @@ require_once __DIR__ . '/../includes/header.php';
                     placeholder="Describe el contenido del libro..."><?= htmlspecialchars($book['descripcion'] ?? '') ?></textarea>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label" for="id_editorial">Editorial</label>
-                    <select id="id_editorial" name="id_editorial" class="form-control">
-                        <option value="">Seleccionar editorial...</option>
-                        <?php foreach ($editorials as $ed): ?>
-                            <option value="<?= $ed['id_editorial'] ?>" <?= ($book['id_editorial'] ?? '') == $ed['id_editorial'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($ed['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="cantidad_disponible">Cantidad disponible</label>
-                    <input type="number" id="cantidad_disponible" name="cantidad_disponible" class="form-control"
-                        min="0" value="<?= $book['cantidad_disponible'] ?? 1 ?>">
-                </div>
+            <div class="form-group">
+                <label class="form-label" for="id_editorial">Editorial</label>
+                <select id="id_editorial" name="id_editorial" class="form-control">
+                    <option value="">Seleccionar editorial...</option>
+                    <?php foreach ($editorials as $ed): ?>
+                        <option value="<?= $ed['id_editorial'] ?>" <?= ($book['id_editorial'] ?? '') == $ed['id_editorial'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($ed['nombre']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
             <div class="form-row">

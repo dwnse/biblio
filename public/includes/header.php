@@ -48,6 +48,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </button>
 
             <ul class="navbar-nav">
+
                 <li>
                     <a href="<?= BASE_URL ?>/catalogo.php" class="<?= $currentPage === 'catalogo.php' ? 'active' : '' ?>">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -59,6 +60,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         Catálogo
                     </a>
                 </li>
+                <?php if (Helpers::isLoggedIn()): ?>
+                <li>
+                    <a href="<?= BASE_URL ?>/mis_favoritos.php" class="<?= $currentPage === 'mis_favoritos.php' ? 'active' : '' ?>">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                            <path d="M12 21C12 21 4 13.36 4 8.5C4 5.42 6.42 3 9.5 3C11.24 3 12.91 3.81 14 5.08C15.09 3.81 16.76 3 18.5 3C21.58 3 24 5.42 24 8.5C24 13.36 16 21 16 21H12Z"/>
+                        </svg>
+                        Mis Favoritos
+                    </a>
+                </li>
+                <?php endif; ?>
 
                 <?php if (Helpers::isAdmin()): ?>
                     <li>

@@ -52,3 +52,11 @@ if (session_status() === PHP_SESSION_NONE) {
     }
     $_SESSION['last_activity'] = time();
 }
+
+// Database configuration
+// Add these constants for database connection
+
+define('DB_HOST', '127.0.0.1');
+define('DB_NAME', 'biblio');
+define('DB_USER', 'root');
+define('DB_PASSWORD', '');

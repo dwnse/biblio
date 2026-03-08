@@ -8,6 +8,10 @@ error_reporting(E_ALL);
 
 header('Content-Type: application/json; charset=utf-8');
 
+if (function_exists('opcache_reset')) {
+    opcache_reset();
+}
+
 // Start output buffering to capture any stray output
 ob_start();
 
@@ -97,7 +101,7 @@ try {
             }
 
             if (!empty($_POST['archivo_url'])) {
-                $validator->url('archivo_url', 'URL del archivo')->maxLength('archivo_url', 255);
+                $validator->maxLength('archivo_url', 255);
             }
 
             if ($validator->fails()) {
@@ -109,7 +113,7 @@ try {
 
             $bookId = $bookService->createBook($_POST, $authorIds, $categoryIds);
             Helpers::setFlash('success', 'Libro registrado correctamente.');
-            Helpers::jsonResponse(['success' => true, 'message' => 'Libro creado', 'id' => $bookId, 'redirect' => BASE_URL . '/admin/libros.php']);
+            Helpers::jsonResponse(['success' => true, 'message' => 'Libro creado', 'id' => $bookId]);
             break;
 
         case 'update':
@@ -180,7 +184,7 @@ try {
             }
 
             if (!empty($_POST['archivo_url'])) {
-                $validator->url('archivo_url', 'URL del archivo')->maxLength('archivo_url', 255);
+                $validator->maxLength('archivo_url', 255);
             }
 
             if ($validator->fails()) {
@@ -192,7 +196,7 @@ try {
 
             $bookService->updateBook($id, $_POST, $authorIds, $categoryIds);
             Helpers::setFlash('success', 'Libro actualizado correctamente.');
-            Helpers::jsonResponse(['success' => true, 'message' => 'Libro actualizado', 'redirect' => BASE_URL . '/admin/libros.php']);
+            Helpers::jsonResponse(['success' => true, 'message' => 'Libro actualizado']);
             break;
 
         case 'delete':

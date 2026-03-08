@@ -8,6 +8,10 @@ error_reporting(E_ALL);
 
 header('Content-Type: application/json; charset=utf-8');
 
+if (function_exists('opcache_reset')) {
+    opcache_reset();
+}
+
 // Start output buffering to capture any stray output
 ob_start();
 
@@ -20,7 +24,15 @@ use App\Utils\Validator;
 
 // Check authentication - return JSON error instead of redirect for API calls
 if (!Helpers::isLoggedIn()) {
-    Helpers::jsonResponse(['success' => false, 'message' => 'Debes iniciar sesión para realizar esta acción.']);
+    Helpers::jsonResponse([
+        'success' => false, 
+        'message' => 'Debes iniciar sesión para realizar esta acción.',
+        'debug' => [
+            'session_id' => session_id(),
+            'cookies' => $_COOKIE,
+            'session_data' => $_SESSION ?? 'NO_SESSION'
+        ]
+    ]);
 }
 if (!Helpers::isAdmin()) {
     Helpers::jsonResponse(['success' => false, 'message' => 'No tienes permisos para realizar esta acción.']);
@@ -77,7 +89,7 @@ try {
                 elseif ($entity === 'category') $catalogService->createCategory($_POST, $userId);
                 elseif ($entity === 'editorial') $catalogService->createEditorial($_POST, $userId);
                 Helpers::setFlash('success', ucfirst($entity) . ' creado(a) correctamente.');
-                Helpers::jsonResponse(['success' => true, 'redirect' => BASE_URL . "/admin/" . ($entity === 'category' ? 'categorias' : $entity . 'es') . ".php"]);
+                Helpers::jsonResponse(['success' => true, 'message' => ucfirst($entity) . ' creado(a) correctamente.']);
 
             case 'update':
                 if (!$id) throw new \Exception('ID inválido');
@@ -85,7 +97,7 @@ try {
                 elseif ($entity === 'category') $catalogService->updateCategory($id, $_POST, $userId);
                 elseif ($entity === 'editorial') $catalogService->updateEditorial($id, $_POST, $userId);
                 Helpers::setFlash('success', ucfirst($entity) . ' actualizado(a) correctamente.');
-                Helpers::jsonResponse(['success' => true, 'redirect' => BASE_URL . "/admin/" . ($entity === 'category' ? 'categorias' : $entity . 'es') . ".php"]);
+                Helpers::jsonResponse(['success' => true, 'message' => ucfirst($entity) . ' actualizado(a) correctamente.']);
 
             case 'delete':
                 if (!$id) throw new \Exception('ID inválido');
