@@ -49,7 +49,7 @@ require_once __DIR__ . '/includes/header.php';
             </svg>
             Volver al catálogo
         </a>
-    </div>
+    </div>  
 
     <!-- Book Detail -->
     <div class="book-detail">
