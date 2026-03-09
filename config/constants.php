@@ -13,8 +13,12 @@ define('CONFIG_PATH', ROOT_PATH . '/config');
 define('SRC_PATH', ROOT_PATH . '/src');
 define('UPLOADS_PATH', PUBLIC_PATH . '/uploads');
 
-// URL base (ajustar según entorno)
-define('BASE_URL', '/biblio/public');
+// URL base (ajustar dinámicamente según entorno: artisan serve vs xampp)
+if (php_sapi_name() == 'cli-server') {
+    define('BASE_URL', '');
+} else {
+    define('BASE_URL', '/biblio/public');
+}
 
 // Zona horaria
 date_default_timezone_set('America/La_Paz');

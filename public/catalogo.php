@@ -46,7 +46,7 @@ require_once __DIR__ . '/includes/header.php';
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input type="text" name="q" value="<?= htmlspecialchars($query) ?>"
-                placeholder="Buscar por título o ISBN...">
+                placeholder="¿Qué libro buscas?">
         </div>
         <div class="search-filter">
             <select name="categoria" onchange="this.form.submit()">
@@ -80,6 +80,75 @@ require_once __DIR__ . '/includes/header.php';
             <?php endif; ?>
         </div>
     <?php else: ?>
+        <?php if (empty($query) && empty($catFilter) && $page === 1): ?>
+            <?php $topBooks = $bookService->getMostDownloadedBooks(4); ?>
+            <?php if (!empty($topBooks)): ?>
+                <div style="margin-bottom: 3rem;">
+                    <br>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="24" height="24">
+                            <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"></path>
+                        </svg>
+                        Los libros más descargados
+                    </h2>
+                    <div class="book-grid">
+                        <?php foreach ($topBooks as $index => $book):
+                            $bookObj = new \App\Models\Book($book);
+                            $delay = $index * 0.05;
+                            ?>
+                            <a href="<?= BASE_URL ?>/libro.php?id=<?= $book['id_libro'] ?>" class="book-card animate-fadeInUp"
+                                style="animation-delay: <?= $delay ?>s;">
+                                <div class="book-cover">
+                                    <?php if (!empty($book['portada_url'])): ?>
+                                        <img src="<?= htmlspecialchars($book['portada_url']) ?>" alt="<?= htmlspecialchars($book['titulo']) ?>">
+                                    <?php else: ?>
+                                        <div class="book-cover-placeholder">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                            </svg>
+                                            <span>
+                                                <?= htmlspecialchars(mb_substr($book['titulo'], 0, 25)) ?>
+                                            </span>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if ($bookObj->isDisponible()): ?>
+                                        <span class="book-status-badge badge badge-success">Disponible</span>
+                                    <?php else: ?>
+                                        <span class="book-status-badge badge badge-danger">No disponible</span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="book-info">
+                                    <div class="book-title">
+                                        <?= htmlspecialchars($book['titulo']) ?>
+                                    </div>
+                                    <div class="book-author">
+                                        <?= htmlspecialchars($bookObj->getAutoresString()) ?>
+                                    </div>
+                                    <div class="book-meta">
+                                        <span class="book-category">
+                                            <?= htmlspecialchars($bookObj->getCategoriasString()) ?>
+                                        </span>
+                                        <?php if ($book['calificacion_promedio'] > 0): ?>
+                                            <?= Helpers::renderStars((float) $book['calificacion_promedio']) ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
+                    Catálogo Completo
+                </h2>
+            <?php endif; ?>
+        <?php endif; ?>
+        
         <div class="book-grid">
             <?php foreach ($books as $index => $book):
                 $bookObj = new \App\Models\Book($book);

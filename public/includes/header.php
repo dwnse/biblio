@@ -19,7 +19,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <?= $pageTitle ?? 'BiblioDigital' ?> —
         <?= APP_NAME ?>
     </title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>/css/styles.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/css/styles.css?v=<?= filemtime(__DIR__ . '/../css/styles.css') ?>">
 </head>
 
 <body>

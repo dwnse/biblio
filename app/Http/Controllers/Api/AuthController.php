@@ -10,6 +10,12 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController
 {
+    public function index()
+    {
+        $usuarios = Usuario::with('rol')->get();
+        return response()->json($usuarios);
+    }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [

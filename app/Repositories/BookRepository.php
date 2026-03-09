@@ -126,6 +126,31 @@ class BookRepository extends BaseRepository
         $stmt->execute(['id' => $bookId]);
         return $stmt->fetchAll();
     }
+    public function getMostDownloadedBooks(int $limit = 4): array
+    {
+        $sql = "SELECT l.*, e.nombre as editorial_nombre,
+                       COALESCE(AVG(r.calificacion), 0) as calificacion_promedio,
+                       COUNT(d.id_descarga) as total_descargas
+                FROM libros l
+                LEFT JOIN editorial e ON l.id_editorial = e.id_editorial
+                LEFT JOIN resenas r ON l.id_libro = r.id_libro AND r.estado = 'visible'
+                LEFT JOIN descargas d ON l.id_libro = d.id_libro
+                WHERE l.estado = 'disponible'
+                GROUP BY l.id_libro
+                ORDER BY total_descargas DESC, l.id_libro DESC
+                LIMIT :limit";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        $books = $stmt->fetchAll();
+
+        foreach ($books as &$book) {
+            $book['autores'] = $this->getBookAuthors((int) $book['id_libro']);
+            $book['categorias'] = $this->getBookCategories((int) $book['id_libro']);
+        }
+        return $books;
+    }
 
     public function attachAuthor(int $bookId, int $authorId): void
     {

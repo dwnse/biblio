@@ -1990,3 +1990,148 @@ select.form-control {
         padding: 1.4rem;
     }
 }
+
+/* ── Footer Minimalist Professional Style ── */
+.footer {
+    background: #0b0f19;
+    color: #94a3b8;
+    padding: 3rem 0 0 0;
+    font-size: 0.85rem;
+    margin-top: auto;
+    border-top: 1px solid #1e293b;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 2.5rem;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+    letter-spacing: -0.5px;
+}
+
+.footer-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #f8fafc;
+    margin-bottom: 1.25rem;
+    font-family: var(--font-heading);
+    letter-spacing: 0.5px;
+}
+
+.footer-col p {
+    color: #64748b;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.footer-col p strong {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.85rem;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: #38bdf8;
+}
+
+.footer-2-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.telegram-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #f8fafc;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s;
+}
+
+.telegram-link:hover {
+    color: #38bdf8;
+}
+
+.telegram-link svg {
+    color: currentColor;
+}
+
+.footer-email {
+    margin-top: 1.5rem;
+    font-weight: 500;
+    color: #e2e8f0 !important;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 0.75rem;
+    margin: 1.5rem 0 1rem 0;
+}
+
+.social-icon {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    background: #1e293b;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    transition: all 0.2s;
+}
+
+.social-icon:hover {
+    background: #38bdf8;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.footer-apps {
+    margin-top: 1rem;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 1.5rem;
+    background: #060910;
+    color: #475569;
+    font-size: 0.8rem;
+    border-top: 1px solid #0f172a;
+}
+
+@media (max-width: 900px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}

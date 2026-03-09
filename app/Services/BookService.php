@@ -46,6 +46,14 @@ class BookService
     }
 
     /**
+     * Obtener los libros más descargados
+     */
+    public function getMostDownloadedBooks(int $limit = 4): array
+    {
+        return $this->bookRepository->getMostDownloadedBooks($limit);
+    }
+
+    /**
      * Crear un libro nuevo
      */
     public function createBook(array $data, array $authorIds = [], array $categoryIds = []): int

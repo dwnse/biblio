@@ -16,6 +16,7 @@ class Usuario extends Authenticatable
     protected $primaryKey = 'id_usuario';
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_rol',

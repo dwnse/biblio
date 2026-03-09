@@ -1,14 +1,17 @@
 <?php
-declare(strict_types=1);
 
-require_once __DIR__ . '/../config/constants.php';
-require_once __DIR__ . '/../vendor/autoload.php';
+use Illuminate\Http\Request;
 
-use App\Utils\Helpers;
+define('LARAVEL_START', microtime(true));
 
-// Redirigir según el rol o al catálogo público si es invitado
-if (Helpers::isLoggedIn() && Helpers::isAdmin()) {
-    Helpers::redirect('/admin/index.php');
-} else {
-    Helpers::redirect('/catalogo.php');
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
 }
+
+// Register the Composer autoloader...
+require __DIR__.'/../vendor/autoload.php';
+
+// Bootstrap Laravel and handle the request...
+(require_once __DIR__.'/../bootstrap/app.php')
+    ->handleRequest(Request::capture());
