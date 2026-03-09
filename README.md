@@ -116,17 +116,6 @@ Uso de Axios para llamadas HTTP con interceptores para tokens de autenticación.
 
 ## 4. Diseño de base de datos
 
-### Modelo relacional
-```
-usuarios (1) ---- (N) descargas (N) ---- (1) libros
-  │                      │
-  └── (1) roles          └── (N) resenas
-                          │
-                          ├── (N) libro_autor (N) ─── (1) autores
-                          ├── (N) libro_categoria (N) ─── (1) categorias
-                          └── (1) editorial
-```
-
 ### Tablas principales
 - **usuarios**: Información de usuarios y roles
 - **libros**: Metadatos de libros
@@ -144,19 +133,6 @@ usuarios (1) ---- (N) descargas (N) ---- (1) libros
 - Libros ↔ Autores (N:M via libro_autor)
 - Libros ↔ Categorías (N:M via libro_categoria)
 - Libros ↔ Editorial (N:1)
-
-### Consulta SQL de ejemplo
-```sql
-SELECT l.titulo, GROUP_CONCAT(a.nombres) as autores,
-       AVG(r.calificacion) as rating
-FROM libros l
-LEFT JOIN libro_autor la ON l.id_libro = la.id_libro
-LEFT JOIN autores a ON la.id_autor = a.id_autor
-LEFT JOIN resenas r ON l.id_libro = r.id_libro AND r.estado = 'visible'
-WHERE l.estado = 'disponible'
-GROUP BY l.id_libro
-ORDER BY rating DESC;
-```
 
 ## 5. Implementación de la API REST
 

@@ -55,7 +55,7 @@ require_once __DIR__ . '/includes/header.php';
     <div class="book-detail">
         <div class="book-detail-cover">
             <?php if (!empty($book['portada_url'])): ?>
-                <img src="<?= htmlspecialchars($book['portada_url']) ?>" alt="<?= htmlspecialchars($book['titulo']) ?>">
+                <img src="<?= BASE_URL . htmlspecialchars($book['portada_url']) ?>" alt="<?= htmlspecialchars($book['titulo']) ?>">
             <?php else: ?>
                 <div class="book-cover-placeholder">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"

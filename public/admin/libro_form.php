@@ -166,7 +166,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <input type="file" id="portada_file" name="portada_file" accept="image/*" style="display:none;">
                     <?php if ($isEdit && !empty($book['portada_url'])): ?>
                         <div class="cover-preview" id="coverPreview">
-                            <img src="<?= htmlspecialchars($book['portada_url']) ?>" alt="Portada actual">
+                            <img src="<?= BASE_URL . htmlspecialchars($book['portada_url']) ?>" alt="Portada actual">
                         </div>
                     <?php else: ?>
                         <div class="cover-preview" id="coverPreview" style="display:none;"></div>

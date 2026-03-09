@@ -54,6 +54,157 @@
 <script src="<?= BASE_URL ?>/js/app.js?v=<?= filemtime(__DIR__ . '/../js/app.js') ?>"></script>
 <?php if (isset($extraScripts))
     echo $extraScripts; ?>
+
+<!-- Weather Widget -->
+<button class="weather-fab" id="weatherFab" aria-label="Ver clima">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+    </svg>
+</button>
+
+<div class="weather-panel" id="weatherPanel">
+    <div class="weather-loading" id="weatherLoading">
+        <div class="weather-loading-spinner"></div>
+        Cargando clima...
+    </div>
+    <div id="weatherContent" style="display:none;"></div>
+    <div class="weather-error" id="weatherError" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>No se pudo obtener el clima</span>
+    </div>
+</div>
+
+<script>
+(function() {
+    const WEATHER_API_KEY = 'f6264551a0a04578a8dbba120f56a451';
+    const DEFAULT_LAT = -16.5;
+    const DEFAULT_LON = -68.15;
+
+    const fab = document.getElementById('weatherFab');
+    const panel = document.getElementById('weatherPanel');
+    const loading = document.getElementById('weatherLoading');
+    const content = document.getElementById('weatherContent');
+    const error = document.getElementById('weatherError');
+
+    let weatherLoaded = false;
+    let isOpen = false;
+
+    fab.addEventListener('click', () => {
+        isOpen = !isOpen;
+        fab.classList.toggle('active', isOpen);
+        panel.classList.toggle('open', isOpen);
+
+        if (!weatherLoaded) {
+            weatherLoaded = true;
+            fetchWeather();
+        }
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+        if (isOpen && !panel.contains(e.target) && !fab.contains(e.target)) {
+            isOpen = false;
+            fab.classList.remove('active');
+            panel.classList.remove('open');
+        }
+    });
+
+    function fetchWeather() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => loadWeather(pos.coords.latitude, pos.coords.longitude),
+                () => loadWeather(DEFAULT_LAT, DEFAULT_LON),
+                { timeout: 5000 }
+            );
+        } else {
+            loadWeather(DEFAULT_LAT, DEFAULT_LON);
+        }
+    }
+
+    async function loadWeather(lat, lon) {
+        try {
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=es&appid=${WEATHER_API_KEY}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('API error');
+            const data = await res.json();
+            renderWeather(data);
+        } catch (err) {
+            loading.style.display = 'none';
+            error.style.display = 'flex';
+        }
+    }
+
+    function renderWeather(data) {
+        const temp = Math.round(data.main.temp);
+        const feelsLike = Math.round(data.main.feels_like);
+        const humidity = data.main.humidity;
+        const wind = (data.wind.speed * 3.6).toFixed(1);
+        const desc = data.weather[0].description;
+        const icon = data.weather[0].icon;
+        const city = data.name;
+
+        content.innerHTML = `
+            <div class="weather-panel-header">
+                <div class="weather-city">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    ${city}
+                </div>
+                <div class="weather-main">
+                    <div class="weather-icon-big">
+                        <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${desc}">
+                    </div>
+                    <div class="weather-temp">${temp}<span>°C</span></div>
+                </div>
+                <div class="weather-desc">${desc}</div>
+            </div>
+            <div class="weather-panel-body">
+                <div class="weather-details">
+                    <div class="weather-detail-item">
+                        <div class="weather-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                        </div>
+                        <div class="weather-detail-info">
+                            <span class="weather-detail-value">${feelsLike}°C</span>
+                            <span class="weather-detail-label">Sensación</span>
+                        </div>
+                    </div>
+                    <div class="weather-detail-item">
+                        <div class="weather-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                        </div>
+                        <div class="weather-detail-info">
+                            <span class="weather-detail-value">${humidity}%</span>
+                            <span class="weather-detail-label">Humedad</span>
+                        </div>
+                    </div>
+                    <div class="weather-detail-item">
+                        <div class="weather-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+                        </div>
+                        <div class="weather-detail-info">
+                            <span class="weather-detail-value">${wind} km/h</span>
+                            <span class="weather-detail-label">Viento</span>
+                        </div>
+                    </div>
+                    <div class="weather-detail-item">
+                        <div class="weather-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        </div>
+                        <div class="weather-detail-info">
+                            <span class="weather-detail-value">${temp > 0 ? temp + '°' : '—'}</span>
+                            <span class="weather-detail-label">Máxima</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        loading.style.display = 'none';
+        content.style.display = 'block';
+    }
+})();
+</script>
+
 </body>
 
 </html>

@@ -22,10 +22,6 @@ Thumbs.db
 *.tmp
 *.cache
 
-# Base de datos
-*.sql
-*.sqlite
-
 # Uploads
 /public/uploads/*
 !/public/uploads/.gitkeep

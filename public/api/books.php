@@ -57,7 +57,7 @@ try {
                 if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                 $destination = $uploadDir . $filename;
                 if (move_uploaded_file($file['tmp_name'], $destination)) {
-                    $_POST['portada_url'] = BASE_URL . '/uploads/covers/' . $filename;
+                    $_POST['portada_url'] = '/uploads/covers/' . $filename;
                 }
             }
 
@@ -75,7 +75,7 @@ try {
                 if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                 $destination = $uploadDir . $filename;
                 if (move_uploaded_file($file['tmp_name'], $destination)) {
-                    $_POST['archivo_url'] = BASE_URL . '/uploads/books/' . $filename;
+                    $_POST['archivo_url'] = '/uploads/books/' . $filename;
                 }
             }
 
@@ -141,7 +141,7 @@ try {
                 if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                 $destination = $uploadDir . $filename;
                 if (move_uploaded_file($file['tmp_name'], $destination)) {
-                    $_POST['portada_url'] = BASE_URL . '/uploads/covers/' . $filename;
+                    $_POST['portada_url'] = '/uploads/covers/' . $filename;
                 }
             }
 
@@ -159,7 +159,7 @@ try {
                 if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                 $destination = $uploadDir . $filename;
                 if (move_uploaded_file($file['tmp_name'], $destination)) {
-                    $_POST['archivo_url'] = BASE_URL . '/uploads/books/' . $filename;
+                    $_POST['archivo_url'] = '/uploads/books/' . $filename;
                 }
             }
 
